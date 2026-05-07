@@ -18,7 +18,6 @@ export default function MusicPlayer({ src, youtubeId }: Props) {
   useEffect(() => {
     const container = iframeContainerRef.current;
     if (!container) return;
-
     const playerDiv = document.createElement("div");
     playerDiv.id = "yt-player-regina";
     container.appendChild(playerDiv);
@@ -71,33 +70,33 @@ export default function MusicPlayer({ src, youtubeId }: Props) {
   }
 
   return (
-    <section
-      className="relative w-full leading-none select-none"
-      style={{ maxHeight: "45vh", overflow: "hidden", cursor: "pointer" }}
+    <div
+      className="relative w-full h-full select-none"
+      style={{ cursor: "pointer" }}
       onClick={toggle}
     >
+      {/* Imagen del reproductor — cubre todo el alto disponible */}
       <img
         src={src}
         alt="Dale play a mi canción favorita"
-        className="w-full block object-cover object-center"
-        style={{ height: "45vh" }}
+        className="w-full h-full object-cover object-center block"
       />
 
-      {/* Zona click sobre triángulo */}
+      {/* Zona click centrada sobre el triángulo */}
       <div
         className="absolute rounded-full z-20"
         style={{
-          top: "50%", left: "50%",
+          top: "55%", left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "26vw", height: "26vw",
-          maxWidth: 110, maxHeight: 110,
-          cursor: "pointer",
+          width: "22vw", height: "22vw",
+          maxWidth: 100, maxHeight: 100,
         }}
       />
 
-      {/* Ecualizador */}
+      {/* Ecualizador animado */}
       {playing && (
-        <div className="absolute left-1/2 -translate-x-1/2 flex gap-[3px] items-end pointer-events-none" style={{ bottom: "12%" }}>
+        <div className="absolute left-1/2 -translate-x-1/2 flex gap-[3px] items-end pointer-events-none z-10"
+          style={{ bottom: "8%" }}>
           {[6, 14, 8, 16, 6].map((h, i) => (
             <div key={i} className="eq-bar rounded-sm bg-[#d4718a]"
               style={{ width: 3, height: h, animationDelay: `${i * 0.15}s`, animationDuration: "0.8s" }} />
@@ -105,23 +104,23 @@ export default function MusicPlayer({ src, youtubeId }: Props) {
         </div>
       )}
 
-      {/* Barra progreso */}
+      {/* Barra de progreso */}
       <div className="absolute bottom-0 left-0 right-0 overflow-hidden transition-opacity duration-300"
         style={{ height: 3, background: "rgba(212,113,138,0.15)", opacity: playing ? 1 : 0 }}>
         <div ref={progressRef} className="h-full transition-all duration-500"
-          style={{ width: "0%", background: "linear-gradient(90deg, #d4718a, #f0b8c8)" }} />
+          style={{ width: "0%", background: "linear-gradient(90deg,#d4718a,#f0b8c8)" }} />
       </div>
 
-      {/* Indicador "no listo" */}
+      {/* "Cargando" mientras no está listo */}
       {!ready && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="text-[#d4718a] text-[3vw] font-lato opacity-60">cargando música...</span>
+        <div className="absolute inset-0 flex items-end justify-center pb-4 pointer-events-none">
+          <span className="font-lato text-[3vw] text-[#d4718a] opacity-50">cargando música...</span>
         </div>
       )}
 
       {/* YouTube iframe oculto */}
       <div ref={iframeContainerRef}
         style={{ position: "absolute", top: -9999, left: -9999, width: 1, height: 1, opacity: 0, pointerEvents: "none" }} />
-    </section>
+    </div>
   );
 }
