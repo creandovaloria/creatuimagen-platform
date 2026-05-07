@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Petals from "@/components/invitaciones/Petals";
 import MusicPlayer from "@/components/invitaciones/MusicPlayer";
 import CalendarioCountdown from "@/components/invitaciones/CalendarioCountdown";
-import Collage from "@/components/invitaciones/Collage";
+import Fotos from "@/components/invitaciones/Fotos";
 import DressCode from "@/components/invitaciones/DressCode";
 import Venue from "@/components/invitaciones/Venue";
 import Tira from "@/components/invitaciones/Tira";
@@ -17,43 +17,61 @@ export const metadata: Metadata = {
   description: "¡Estás invitado a celebrar los XV años de Regina! 6 de Junio 2026",
 };
 
+function Divider() {
+  return (
+    <div className="w-full py-3 flex items-center justify-center gap-2"
+      style={{ background: "#fdf0f3" }}>
+      <div className="flex-1 h-[1px] max-w-[60px]" style={{ background: "linear-gradient(to right, transparent, #f0b8c8)" }} />
+      <span style={{ color: "#e8a0b0", fontSize: "3vw" }}>✦ ✧ ✦</span>
+      <div className="flex-1 h-[1px] max-w-[60px]" style={{ background: "linear-gradient(to left, transparent, #f0b8c8)" }} />
+    </div>
+  );
+}
+
 export default function XVRegina() {
   return (
-    <main className="relative w-full overflow-x-hidden bg-[#fdf0f3]">
+    <main className="relative w-full overflow-x-hidden" style={{ background: "#fdf0f3" }}>
       <Petals />
 
-      {/* 1. INTRO */}
+      {/* ── SECCIÓN 1: INTRO ── */}
       <section className="w-full leading-none relative">
         <img src={images.intro} alt="Invitación XV años Regina" className="w-full h-auto block" />
         <ScrollHint />
       </section>
 
-      {/* 2. MÚSICA — XScEqRYnVLI es versión que permite embedding */}
-      <MusicPlayer src={images.musica} />
+      {/* ── SECCIÓN 2: MÚSICA ── */}
+      <section className="w-full" style={{ background: "#fff8fa", paddingBottom: "8vw" }}>
+        <MusicPlayer src={images.musica} />
+      </section>
 
-      {/* 3. CALENDARIO + COUNTDOWN */}
+      <Divider />
+
+      {/* ── SECCIÓN 3: CALENDARIO + COUNTDOWN ── */}
       <CalendarioCountdown eventDate="2026-06-06T16:00:00" />
 
-      {/* 4. COLLAGE */}
-      <Collage src={images.collage} />
+      <Divider />
 
-      {/* 5. DRESS CODE */}
+      {/* ── SECCIÓN 4: FOTOS (collage + tira) ── */}
+      <Fotos collage={images.collage} tira={images.tira} />
+
+      <Divider />
+
+      {/* ── SECCIÓN 5: DRESS CODE + LUGAR ── */}
       <DressCode />
-
-      {/* 6. LUGAR — por definir */}
       <Venue porDefinir />
 
-      {/* 7. TIRA FOTOGRÁFICA */}
-      <Tira src={images.tira} />
+      <Divider />
 
-      {/* 8. RSVP */}
+      {/* ── SECCIÓN 6: FLAMINGO + RSVP ── */}
       <RSVP
         src={images.flamingo}
         whatsapp="524272199374"
         mensaje="Hola Liz Barrón, te escribo referente a mi asistencia/inasistencia a la fiesta de Regina 🎀 Mi nombre es: "
       />
 
+      {/* ── FOOTER ── */}
       <Footer />
+
       <ScrollReveal />
     </main>
   );
