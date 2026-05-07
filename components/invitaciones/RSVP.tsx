@@ -28,33 +28,44 @@ export default function RSVP({ src, whatsapp, mensaje }: Props) {
           ¡Me haría muy feliz<br />que vinieras!
         </p>
         <p className="font-lato text-[3.8vw] text-[#6b4a52] leading-relaxed">
-          Tu presencia haría que mi cumpleaños sea aún más especial.
+          Tu presencia <strong>hará</strong> que mi cumpleaños sea aún más especial.
           Espero compartir risas, momentos lindos y celebrar juntos este día. 🎀
         </p>
       </div>
 
-      {/* Separador decorativo */}
+      {/* Separador */}
       <div className="flex items-center gap-3 w-full max-w-xs">
         <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
         <span className="text-[5vw] text-[#e8a0b0]">🌸</span>
         <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
       </div>
 
-      {/* Botón RSVP — claramente un botón */}
+      {/* Botón RSVP — grande y claro */}
       <a
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full max-w-xs flex items-center justify-center gap-3 rounded-2xl py-5 px-6 font-lato font-bold tracking-wider uppercase shadow-xl active:scale-95 transition-transform"
         style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "10px",
+          width: "100%",
+          maxWidth: "340px",
+          borderRadius: "20px",
+          padding: "20px 24px",
           background: "linear-gradient(135deg, #c0486a 0%, #d4718a 100%)",
           color: "white",
-          fontSize: "4vw",
+          fontFamily: "var(--font-lato), sans-serif",
+          fontSize: "4.5vw",
+          fontWeight: "700",
           letterSpacing: "2px",
+          textTransform: "uppercase",
+          textDecoration: "none",
           boxShadow: "0 8px 30px rgba(192,72,106,0.45), inset 0 1px 0 rgba(255,255,255,0.2)",
         }}
       >
-        <span style={{ fontSize: "5vw" }}>🎉</span>
+        <span style={{ fontSize: "6vw" }}>🎉</span>
         Confirmar Asistencia
       </a>
 
