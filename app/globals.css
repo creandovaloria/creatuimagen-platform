@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --pink: #d4718a;
+  --pink-light: #f0b8c8;
+  --pink-pale: #fde8ed;
+  --pink-dark: #b5566e;
+  --dusty: #c0486a;
+  --cream: #fdf0f3;
+  --warm: #fff8fa;
+  --text: #2a1a1f;
+  --text-mid: #6b4a52;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: hidden; background: var(--cream); }
+
+/* Fonts */
+.font-playfair { font-family: var(--font-playfair), serif; }
+.font-dancing  { font-family: var(--font-dancing), cursive; }
+.font-lato     { font-family: var(--font-lato), sans-serif; }
+
+/* Pétalos */
+@keyframes petalFall {
+  0%   { transform: translateY(-40px) rotate(0deg) translateX(0); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg) translateX(30px); opacity: 0; }
+}
+.petal-fall { animation: petalFall linear infinite; }
+
+/* Slideshow */
+@keyframes slideShow {
+  0%, 28%   { opacity: 1; }
+  33%, 95%  { opacity: 0; }
+  100%      { opacity: 0; }
+}
+.slide-img { animation: slideShow linear infinite; }
+
+/* Ecualizador */
+@keyframes eq {
+  from { transform: scaleY(0.3); }
+  to   { transform: scaleY(1); }
+}
+.eq-bar { animation: eq ease-in-out infinite alternate; }
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
