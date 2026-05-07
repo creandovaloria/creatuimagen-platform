@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Petals from "@/components/invitaciones/Petals";
-import Intro from "@/components/invitaciones/Intro";
 import MusicPlayer from "@/components/invitaciones/MusicPlayer";
 import CalendarioCountdown from "@/components/invitaciones/CalendarioCountdown";
 import Collage from "@/components/invitaciones/Collage";
@@ -14,35 +13,39 @@ import { images } from "@/lib/regina-images";
 export const metadata: Metadata = {
   title: "XV Años – Regina 🎀",
   description: "¡Estás invitado a celebrar los XV años de Regina! 23 de Mayo 2026 · Limmon · San Juan del Río",
-  openGraph: {
-    title: "XV Años – Regina 🎀",
-    description: "¡Estás invitado a celebrar los XV años de Regina!",
-    type: "website",
-  },
 };
 
 export default function XVRegina() {
   return (
     <main className="relative w-full overflow-x-hidden bg-[#fdf0f3]">
-      {/* Pétalos cayendo — fixed, sobre todo */}
       <Petals />
 
-      {/* 1. Intro */}
-      <Intro src={images.intro} />
+      {/* ── HERO: intro + música en 100vh, ambas completas ── */}
+      <section
+        className="w-full flex flex-col"
+        style={{ height: "100svh" }}
+      >
+        {/* Intro: ocupa 58% del alto */}
+        <div className="w-full overflow-hidden" style={{ flex: "0 0 58%" }}>
+          <img
+            src={images.intro}
+            alt="Invitación XV años Regina"
+            className="w-full h-full object-cover object-top"
+          />
+        </div>
 
-      {/* 2. Música */}
-      <MusicPlayer
-        src={images.musica}
-        youtubeId="7kzPMz7bSGo"
-      />
+        {/* Música: ocupa 42% del alto */}
+        <div className="w-full overflow-hidden" style={{ flex: "0 0 42%" }}>
+          <MusicPlayer
+            src={images.musica}
+            youtubeId="7kzPMz7bSGo"
+          />
+        </div>
+      </section>
 
-      {/* 3. Calendario + Countdown */}
+      {/* ── RESTO DE LA INVITACIÓN ── */}
       <CalendarioCountdown eventDate="2026-05-23T16:00:00" />
-
-      {/* 4. Collage Slideshow */}
       <Collage src={images.collage} />
-
-      {/* 5. Lugar del evento */}
       <Venue
         src={images.restaurante}
         nombre="Limmon"
@@ -51,20 +54,14 @@ export default function XVRegina() {
         hora="4:00 pm"
         mapsUrl="https://maps.google.com/?q=Limmon+Paso+de+los+Guzman+12+Centro+76800+San+Juan+del+Rio+Qro"
       />
-
-      {/* 6. Tira fotográfica */}
       <Tira src={images.tira} />
-
-      {/* 7. Mensaje + Flamingo + RSVP */}
       <RSVP
         src={images.flamingo}
         whatsapp="524272199374"
         mensaje="Hola Liz Barrón, te escribo referente a mi asistencia/inasistencia a la fiesta de Regina 🎀 Mi nombre es: "
       />
-
-      {/* Footer branding */}
       <Footer />
-    <ScrollReveal />
+      <ScrollReveal />
     </main>
   );
 }
