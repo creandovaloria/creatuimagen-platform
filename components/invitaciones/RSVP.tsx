@@ -1,3 +1,5 @@
+import RSVPForm from "./RSVPForm";
+
 interface Props {
   src: string;
   whatsapp: string;
@@ -11,15 +13,12 @@ export default function RSVP({ src, whatsapp, mensaje }: Props) {
     <section className="flex flex-col items-center px-8 py-12 gap-7 text-center reveal"
       style={{ background: "linear-gradient(160deg, #fff0f4 0%, #fde8ed 60%, #f9d6e0 100%)" }}>
 
-      {/* Flamingo con glow */}
+      {/* Flamingo */}
       <div className="relative flex justify-center">
         <div className="absolute inset-0 rounded-full blur-2xl opacity-30"
           style={{ background: "#d4718a", transform: "scale(0.7) translateY(20%)" }} />
-        <img
-          src={src}
-          alt="Flamingo"
-          className="relative w-[55vw] max-w-[240px] h-auto drop-shadow-xl soft-pulse"
-        />
+        <img src={src} alt="Flamingo"
+          className="relative w-[55vw] max-w-[240px] h-auto drop-shadow-xl soft-pulse" />
       </div>
 
       {/* Mensaje */}
@@ -40,33 +39,32 @@ export default function RSVP({ src, whatsapp, mensaje }: Props) {
         <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
       </div>
 
-      {/* Botón RSVP — grande y claro */}
-      <a
-        href={waUrl}
-        target="_blank"
-        rel="noopener noreferrer"
+      {/* Formulario RSVP */}
+      <RSVPForm />
+
+      {/* Separador */}
+      <div className="flex items-center gap-3 w-full max-w-xs">
+        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
+        <span className="font-lato text-[3vw] text-[#b5566e]">o si prefieres</span>
+        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
+      </div>
+
+      {/* Botón WA — temporal hasta que esté probado el form */}
+      <a href={waUrl} target="_blank" rel="noopener noreferrer"
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "10px",
-          width: "100%",
-          maxWidth: "340px",
-          borderRadius: "20px",
-          padding: "20px 24px",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          gap: "10px", width: "100%", maxWidth: "340px",
+          borderRadius: "20px", padding: "20px 24px",
           background: "linear-gradient(135deg, #c0486a 0%, #d4718a 100%)",
           color: "white",
           fontFamily: "var(--font-lato), sans-serif",
-          fontSize: "4.5vw",
-          fontWeight: "700",
-          letterSpacing: "2px",
-          textTransform: "uppercase",
+          fontSize: "4.5vw", fontWeight: "700",
+          letterSpacing: "2px", textTransform: "uppercase",
           textDecoration: "none",
-          boxShadow: "0 8px 30px rgba(192,72,106,0.45), inset 0 1px 0 rgba(255,255,255,0.2)",
-        }}
-      >
-        <span style={{ fontSize: "6vw" }}>🎉</span>
-        Confirmar Asistencia
+          boxShadow: "0 8px 30px rgba(192,72,106,0.45)",
+        }}>
+        <span style={{ fontSize: "6vw" }}>💬</span>
+        Confirmar por WhatsApp
       </a>
 
       <p className="font-lato text-[3vw] text-[#b5566e] opacity-70">
