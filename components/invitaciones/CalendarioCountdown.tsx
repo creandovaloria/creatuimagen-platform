@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 interface Props { eventDate: string; }
 
 const DAYS = ["D","L","M","M","J","V","S"];
-// Mayo 2026: empieza el viernes (día 5)
-const MAY_2026 = [
-  null,null,null,null,null,1,2,
-  3,4,5,6,7,8,9,
-  10,11,12,13,14,15,16,
-  17,18,19,20,21,22,23,
-  24,25,26,27,28,29,30,
-  31,null,null,null,null,null,null,
+
+// Junio 2026: empieza el lunes (día 1)
+const JUN_2026 = [
+  null,1,2,3,4,5,6,
+  7,8,9,10,11,12,13,
+  14,15,16,17,18,19,20,
+  21,22,23,24,25,26,27,
+  28,29,30,null,null,null,null,
 ];
 
 function pad(n: number) { return String(n).padStart(2, "0"); }
@@ -39,26 +39,24 @@ export default function CalendarioCountdown({ eventDate }: Props) {
   return (
     <section className="bg-[#fdf6f0] flex flex-col items-center px-6 py-12 gap-6">
       {/* Mes */}
-      <span className="font-dancing text-[14vw] text-[#d4718a] leading-none">Mayo</span>
+      <span className="font-dancing text-[14vw] text-[#d4718a] leading-none">Junio</span>
 
       {/* Calendario */}
-      <div className="grid grid-cols-7 w-full max-w-xs text-center gap-y-0">
-        {DAYS.map((d) => (
-          <span key={d} className="font-lato text-[3vw] font-bold text-[#2a1a1f] pb-3 tracking-wide">{d}</span>
+      <div className="grid grid-cols-7 w-full max-w-xs text-center">
+        {DAYS.map((d, i) => (
+          <span key={i} className="font-lato text-[3vw] font-bold text-[#2a1a1f] pb-3 tracking-wide">{d}</span>
         ))}
-        {MAY_2026.map((day, i) => (
+        {JUN_2026.map((day, i) => (
           <span
             key={i}
             className={`font-lato text-[4vw] py-2 font-light ${
               !day ? "text-transparent" :
-              day === 23
-                ? "font-bold text-[#c0486a] relative"
-                : "text-[#2a1a1f]"
+              day === 6 ? "font-bold text-[#c0486a]" : "text-[#2a1a1f]"
             }`}
           >
-            {day === 23 ? (
+            {day === 6 ? (
               <span className="inline-flex items-center justify-center w-[8vw] h-[8vw] max-w-[32px] max-h-[32px] border-2 border-[#d4718a] rounded-full">
-                23
+                6
               </span>
             ) : (day ?? "")}
           </span>
@@ -66,11 +64,9 @@ export default function CalendarioCountdown({ eventDate }: Props) {
       </div>
 
       {/* Destellos */}
-      <div className="flex justify-center gap-3 text-[4.5vw] text-[#e8a0b0]">
-        ✦ ✧ ✦ ✧ ✦
-      </div>
+      <div className="flex justify-center gap-3 text-[4.5vw] text-[#e8a0b0]">✦ ✧ ✦ ✧ ✦</div>
 
-      {/* Arco decorativo */}
+      {/* Arco */}
       <div className="w-[55%] h-3 border-t border-l border-r border-[#f0b8c8] rounded-t-full -mb-1" />
 
       {/* Countdown */}
