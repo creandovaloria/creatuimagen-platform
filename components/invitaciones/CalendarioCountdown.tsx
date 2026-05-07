@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 interface Props { eventDate: string; }
 
 const DAYS = ["D","L","M","M","J","V","S"];
-
-// Junio 2026: empieza el lunes
 const JUN_2026 = [
   null,1,2,3,4,5,6,
   7,8,9,10,11,12,13,
@@ -37,66 +35,68 @@ export default function CalendarioCountdown({ eventDate }: Props) {
   }, [eventDate]);
 
   return (
-    <section className="bg-[#fdf6f0] flex flex-col items-center px-6 py-12 gap-6">
+    <section className="flex flex-col items-center px-6 py-10 gap-6 reveal"
+      style={{ background: "linear-gradient(180deg, #fff8fa 0%, #fdf0f3 100%)" }}>
 
       {/* Mes */}
       <span className="font-dancing text-[14vw] text-[#d4718a] leading-none">Junio</span>
 
       {/* Calendario */}
-      <div className="grid grid-cols-7 w-full max-w-xs text-center">
-        {DAYS.map((d, i) => (
-          <span key={i} className="font-lato text-[3vw] font-bold text-[#2a1a1f] pb-3 tracking-wide">{d}</span>
-        ))}
-        {JUN_2026.map((day, i) => (
-          <span key={i} className={`font-lato text-[4vw] py-2 font-light ${
-            !day ? "text-transparent" :
-            day === 6 ? "font-bold text-[#c0486a]" : "text-[#2a1a1f]"
-          }`}>
-            {day === 6 ? (
-              <span className="inline-flex items-center justify-center w-[8vw] h-[8vw] max-w-[32px] max-h-[32px] border-2 border-[#d4718a] rounded-full">6</span>
-            ) : (day ?? "")}
-          </span>
-        ))}
+      <div className="w-full max-w-xs bg-white rounded-3xl p-5 shadow-sm border border-[#f5c2d0]">
+        <div className="grid grid-cols-7 text-center gap-y-1">
+          {DAYS.map((d, i) => (
+            <span key={i} className="font-lato text-[2.8vw] font-bold text-[#2a1a1f] pb-2 tracking-wide">{d}</span>
+          ))}
+          {JUN_2026.map((day, i) => (
+            <span key={i} className={`font-lato text-[3.8vw] py-1.5 font-light ${
+              !day ? "text-transparent" :
+              day === 6 ? "font-bold text-[#c0486a]" : "text-[#2a1a1f]"
+            }`}>
+              {day === 6 ? (
+                <span className="inline-flex items-center justify-center w-[7.5vw] h-[7.5vw] max-w-[30px] max-h-[30px] border-2 border-[#d4718a] rounded-full">
+                  6
+                </span>
+              ) : (day ?? "")}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Destellos */}
-      <div className="flex justify-center gap-3 text-[4.5vw] text-[#e8a0b0]">✦ ✧ ✦ ✧ ✦</div>
+      {/* Mensaje + countdown */}
+      <div className="flex flex-col items-center gap-4 w-full max-w-xs">
+        <p className="font-dancing text-[6.5vw] text-[#c0486a] text-center">
+          ¡Falta muy poco!
+        </p>
 
-      {/* Texto superior countdown */}
-      <p className="font-dancing text-[6vw] text-[#c0486a] text-center leading-snug">
-        ¡Falta muy poco!
-      </p>
+        {/* Arco */}
+        <div className="w-[55%] h-3 border-t border-l border-r border-[#f0b8c8] rounded-t-full -mb-1" />
 
-      {/* Arco decorativo */}
-      <div className="w-[55%] h-3 border-t border-l border-r border-[#f0b8c8] rounded-t-full -mb-1" />
+        {/* Countdown */}
+        <div className="flex items-center gap-[1.5vw] bg-white border-2 border-[#f0b8c8] rounded-full px-5 py-4 shadow-md w-full justify-center">
+          {[
+            { val: time.d, lbl: "DÍAS" },
+            { sep: "·" },
+            { val: time.h, lbl: "HORAS" },
+            { sep: "·" },
+            { val: time.m, lbl: "MIN" },
+            { sep: "·" },
+            { val: time.s, lbl: "SEG" },
+          ].map((item, i) =>
+            "sep" in item ? (
+              <span key={i} className="font-playfair text-[7vw] text-[#e8b0c0] mb-1 leading-none">{item.sep}</span>
+            ) : (
+              <div key={i} className="flex flex-col items-center min-w-[10vw]">
+                <span className="font-playfair text-[9vw] font-bold text-[#c0486a] leading-none">{item.val}</span>
+                <span className="font-lato text-[1.8vw] tracking-widest text-[#d4718a] uppercase mt-0.5 font-bold">{item.lbl}</span>
+              </div>
+            )
+          )}
+        </div>
 
-      {/* Countdown */}
-      <div className="flex items-center gap-[1.5vw] bg-white border-2 border-[#f0b8c8] rounded-full px-6 py-4 shadow-md w-full max-w-xs justify-center">
-        {[
-          { val: time.d, lbl: "DÍAS" },
-          { sep: "·" },
-          { val: time.h, lbl: "HORAS" },
-          { sep: "·" },
-          { val: time.m, lbl: "MIN" },
-          { sep: "·" },
-          { val: time.s, lbl: "SEG" },
-        ].map((item, i) =>
-          "sep" in item ? (
-            <span key={i} className="font-playfair text-[8vw] text-[#e8b0c0] mb-2 leading-none">{item.sep}</span>
-          ) : (
-            <div key={i} className="flex flex-col items-center min-w-[11vw]">
-              <span className="font-playfair text-[10vw] font-bold text-[#c0486a] leading-none">{item.val}</span>
-              <span className="font-lato text-[1.8vw] tracking-widest text-[#d4718a] uppercase mt-0.5 font-bold">{item.lbl}</span>
-            </div>
-          )
-        )}
+        <p className="font-dancing text-[5.5vw] text-[#d4718a] text-center leading-snug">
+          para vivir juntos este momento<br />tan especial 💕
+        </p>
       </div>
-
-      {/* Texto inferior countdown */}
-      <p className="font-dancing text-[5.5vw] text-[#d4718a] text-center leading-snug max-w-xs">
-        para vivir juntos este momento<br />tan especial 💕
-      </p>
-
     </section>
   );
 }
