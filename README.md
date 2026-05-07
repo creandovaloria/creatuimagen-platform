@@ -1,36 +1,164 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# creatuimagen.online — Plataforma de Presencia Digital
 
-## Getting Started
+Plataforma multi-producto para invitaciones digitales y perfiles digitales personales, construida sobre Next.js + Supabase + Cloudinary, desplegada en Vercel.
 
-First, run the development server:
+## Marca
+- **Plataforma operativa:** creatuimagen.online
+- **Marca principal:** arturobarrios.com (footer en todos los productos)
+- **Event Planner aliada:** Liz Barron Event Planner
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Arquitectura de subdominios
+
+```
+creatuimagen.online
+├── invita.creatuimagen.online       ← Invitaciones digitales
+│     ├── /XV-Regina                 ← XV años Regina (caso 1)
+│     ├── /Boda-Ana-Carlos           ← próximos eventos
+│     └── /Cumple-Luis
+│
+├── perfil.creatuimagen.online       ← Perfiles digitales tipo linktree
+│     ├── /andy-villarruel           ← caso 1
+│     ├── /liz-barron
+│     └── /arturo-barrios
+│
+└── dashboard.creatuimagen.online    ← Panel de administración
+      ├── /login
+      ├── /eventos
+      └── /perfiles
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack tecnológico
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Capa | Tecnología | Plan gratuito |
+|------|-----------|---------------|
+| Framework | Next.js 14 (App Router) | — |
+| Hosting | Vercel | Hobby (gratis) |
+| Base de datos | Supabase | 500MB, 50k usuarios |
+| Imágenes/Video | Cloudinary | 25GB, 25k transformaciones |
+| Autenticación | Supabase Auth | Incluido |
+| Pagos | Stripe | 2.9% por transacción |
+| WhatsApp | Meta Business API | 1,000 conv/mes gratis |
+| Emails | Resend | 3,000/mes gratis |
+| Contacto VCF | Serverless Function | — |
+| Animaciones | Lottie + CSS | — |
+| DNS | Namecheap | — |
 
-## Learn More
+**Costo operativo mes 1–100 clientes: $0**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Productos
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. Invitaciones Digitales (`invita.creatuimagen.online`)
+Landing pages mobile-first para eventos: XV años, bodas, bautizos, cumpleaños.
 
-## Deploy on Vercel
+**Funcionalidades:**
+- Diseño fullscreen scroll fluido para celular
+- Countdown en tiempo real
+- Calendario del evento
+- Slideshow animado de fotos
+- Reproductor de canción favorita (YouTube Audio API)
+- Pétalos / confeti CSS animation
+- Sección lugar del evento con Google Maps
+- RSVP con formulario → guarda en Supabase
+- Botón WhatsApp con mensaje preescrito
+- Footer branding arturobarrios.com
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Perfiles Digitales (`perfil.creatuimagen.online`)
+Páginas personales tipo linktree con identidad visual propia.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Funcionalidades:**
+- Foto de perfil con identidad visual
+- Links a redes sociales y servicios
+- Botón "Guardar Contacto" → descarga .vcf dinámico desde Supabase
+- Instalable como PWA (ícono en pantalla de inicio)
+- Optimizado para compartir por WhatsApp
+
+### 3. Dashboard (`dashboard.creatuimagen.online`)
+Panel de administración para Arturo, Liz y clientes.
+
+**Funcionalidades:**
+- Login seguro (Supabase Auth)
+- CRUD de eventos e invitaciones
+- Lista de confirmados RSVP en tiempo real
+- Analytics: aperturas, dispositivos, ciudades
+- Exportar lista de invitados a Excel
+- Gestión de perfiles digitales
+- Subida de imágenes a Cloudinary
+
+---
+
+## Estructura del repo
+
+```
+creatuimagen/
+├── app/
+│   ├── (invita)/
+│   │   └── [slug]/
+│   │       └── page.tsx          ← invitación dinámica por slug
+│   ├── (perfil)/
+│   │   └── [slug]/
+│   │       └── page.tsx          ← perfil digital por slug
+│   ├── dashboard/
+│   │   ├── page.tsx
+│   │   ├── eventos/
+│   │   └── perfiles/
+│   └── api/
+│       ├── rsvp/route.ts         ← guarda confirmación
+│       ├── contacto/[slug]/route.ts ← genera .vcf dinámico
+│       ├── track/route.ts        ← analytics de apertura
+│       └── whatsapp/route.ts     ← notificaciones automáticas
+├── components/
+│   ├── invitaciones/
+│   │   ├── Slideshow.tsx
+│   │   ├── Countdown.tsx
+│   │   ├── Calendario.tsx
+│   │   ├── MusicPlayer.tsx
+│   │   ├── PetalosAnimation.tsx
+│   │   ├── VenueMap.tsx
+│   │   └── RSVPForm.tsx
+│   ├── perfil/
+│   │   ├── ProfileCard.tsx
+│   │   ├── LinkButton.tsx
+│   │   └── SaveContactButton.tsx
+│   └── ui/
+│       └── (componentes compartidos)
+├── lib/
+│   ├── supabase.ts
+│   ├── cloudinary.ts
+│   └── vcf.ts
+├── public/
+└── CLAUDE.md
+```
+
+---
+
+## Casos de uso activos
+
+| Producto | Cliente | URL | Estado |
+|----------|---------|-----|--------|
+| Invitación XV | Regina | invita.creatuimagen.online/XV-Regina | 🔄 En desarrollo |
+| Perfil digital | Andy Villarruel | perfil.creatuimagen.online/andy-villarruel | 🔄 En desarrollo |
+
+---
+
+## Monetización
+
+| Producto | Plan | Precio MXN | Incluye |
+|----------|------|-----------|---------|
+| Invitación | Basic | $499 | 1 evento, RSVP, 3 meses |
+| Invitación | Pro | $999 | + Dashboard, WhatsApp auto, 6 meses |
+| Invitación | Premium | $1,999 | + Analytics, dominio propio, 12 meses |
+| Perfil Digital | Básico | $299 | Perfil + VCF, 6 meses |
+| Perfil Digital | Pro | $699 | + PWA + Analytics, 12 meses |
+| Paquete Liz | Especial | TBD | Múltiples eventos + dashboard unificado |
+
+---
+
+## Créditos
+- Desarrollo: [arturobarrios.com](https://arturobarrios.com)
+- Event Planner: Liz Barron Event Planner (+524272199374)
