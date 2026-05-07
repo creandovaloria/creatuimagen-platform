@@ -3,6 +3,7 @@ import Petals from "@/components/invitaciones/Petals";
 import MusicPlayer from "@/components/invitaciones/MusicPlayer";
 import CalendarioCountdown from "@/components/invitaciones/CalendarioCountdown";
 import Collage from "@/components/invitaciones/Collage";
+import DressCode from "@/components/invitaciones/DressCode";
 import Venue from "@/components/invitaciones/Venue";
 import Tira from "@/components/invitaciones/Tira";
 import RSVP from "@/components/invitaciones/RSVP";
@@ -27,8 +28,8 @@ export default function XVRegina() {
         <ScrollHint />
       </section>
 
-      {/* 2. MÚSICA */}
-      <MusicPlayer src={images.musica} youtubeId="7kzPMz7bSGo" />
+      {/* 2. MÚSICA — XScEqRYnVLI es versión que permite embedding */}
+      <MusicPlayer src={images.musica} youtubeId="XScEqRYnVLI" />
 
       {/* 3. CALENDARIO + COUNTDOWN */}
       <CalendarioCountdown eventDate="2026-06-06T16:00:00" />
@@ -36,13 +37,16 @@ export default function XVRegina() {
       {/* 4. COLLAGE */}
       <Collage src={images.collage} />
 
-      {/* 5. LUGAR — por definir */}
+      {/* 5. DRESS CODE */}
+      <DressCode />
+
+      {/* 6. LUGAR — por definir */}
       <Venue porDefinir />
 
-      {/* 6. TIRA FOTOGRÁFICA */}
+      {/* 7. TIRA FOTOGRÁFICA */}
       <Tira src={images.tira} />
 
-      {/* 7. RSVP */}
+      {/* 8. RSVP */}
       <RSVP
         src={images.flamingo}
         whatsapp="524272199374"
