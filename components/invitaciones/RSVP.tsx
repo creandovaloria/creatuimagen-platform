@@ -28,7 +28,7 @@ export default function RSVP({ src, whatsapp, mensaje }: Props) {
           ¡Me haría muy feliz<br />que vinieras!
         </p>
         <p className="font-lato text-[3.8vw] text-[#6b4a52] leading-relaxed">
-          Tu presencia <strong>hará</strong> que mi cumpleaños sea aún más especial.
+          Tu presencia hará que mi cumpleaños sea aún más especial.
           Espero compartir risas, momentos lindos y celebrar juntos este día. 🎀
         </p>
       </div>
