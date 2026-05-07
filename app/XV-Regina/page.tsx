@@ -29,7 +29,7 @@ export default function XVRegina() {
       </section>
 
       {/* 2. MÚSICA — XScEqRYnVLI es versión que permite embedding */}
-      <MusicPlayer src={images.musica} youtubeId="XScEqRYnVLI" />
+      <MusicPlayer src={images.musica} />
 
       {/* 3. CALENDARIO + COUNTDOWN */}
       <CalendarioCountdown eventDate="2026-06-06T16:00:00" />
