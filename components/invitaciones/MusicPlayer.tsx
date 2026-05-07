@@ -15,44 +15,66 @@ export default function MusicPlayer({ src }: Props) {
   const widgetRef = useRef<any>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
+  const pendingPlay = useRef(false); // si el usuario clickeó antes de estar listo
 
   useEffect(() => {
-    // Cargar SoundCloud Widget SDK
+    function initWidget() {
+      if (!iframeRef.current || !window.SC) return;
+      const widget = window.SC.Widget(iframeRef.current);
+      widgetRef.current = widget;
+
+      widget.bind(window.SC.Widget.Events.READY, () => {
+        setReady(true);
+        // Si el usuario ya clickeó antes de que estuviera listo → reproducir ahora
+        if (pendingPlay.current) {
+          pendingPlay.current = false;
+          widget.play();
+        }
+      });
+
+      widget.bind(window.SC.Widget.Events.PLAY,   () => setPlaying(true));
+      widget.bind(window.SC.Widget.Events.PAUSE,  () => setPlaying(false));
+      widget.bind(window.SC.Widget.Events.FINISH, () => setPlaying(false));
+    }
+
     if (!document.getElementById("sc-sdk")) {
       const script = document.createElement("script");
       script.id = "sc-sdk";
       script.src = "https://w.soundcloud.com/player/api.js";
       script.onload = initWidget;
       document.head.appendChild(script);
-    } else if (window.SC) {
-      initWidget();
+    } else {
+      // SDK ya cargado — esperar un tick para que el iframe esté montado
+      setTimeout(initWidget, 100);
     }
   }, []);
 
-  function initWidget() {
-    if (!iframeRef.current || !window.SC) return;
-    widgetRef.current = window.SC.Widget(iframeRef.current);
-    widgetRef.current.bind(window.SC.Widget.Events.READY, () => {
-      setReady(true);
-    });
-    widgetRef.current.bind(window.SC.Widget.Events.PLAY, () => setPlaying(true));
-    widgetRef.current.bind(window.SC.Widget.Events.PAUSE, () => setPlaying(false));
-    widgetRef.current.bind(window.SC.Widget.Events.FINISH, () => setPlaying(false));
-  }
-
   function toggle() {
-    if (!ready || !widgetRef.current) return;
+    const widget = widgetRef.current;
+
+    if (!widget) {
+      // Widget aún no inicializado — marcar pending y esperar
+      pendingPlay.current = true;
+      return;
+    }
+
+    if (!ready) {
+      // Widget inicializado pero no listo aún → marcar pending
+      pendingPlay.current = true;
+      return;
+    }
+
     if (playing) {
-      widgetRef.current.pause();
+      widget.pause();
     } else {
-      widgetRef.current.play();
+      widget.play();
     }
   }
 
   return (
     <section
       className="relative w-full leading-none select-none"
-      style={{ cursor: "pointer" }}
+      style={{ cursor: ready ? "pointer" : "wait" }}
       onClick={toggle}
     >
       <img
@@ -72,32 +94,47 @@ export default function MusicPlayer({ src }: Props) {
         }}
       />
 
-      {/* Ecualizador animado */}
+      {/* Indicador cargando — solo visible hasta que esté listo */}
+      {!ready && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 pointer-events-none">
+          <span className="font-lato text-[2.8vw] text-[#d4718a] opacity-60 animate-pulse">
+            ♪ cargando...
+          </span>
+        </div>
+      )}
+
+      {/* Ecualizador animado cuando suena */}
       {playing && (
-        <div className="absolute left-1/2 -translate-x-1/2 flex gap-[3px] items-end z-10 pointer-events-none"
-          style={{ bottom: "10%" }}>
+        <div
+          className="absolute left-1/2 -translate-x-1/2 flex gap-[3px] items-end z-10 pointer-events-none"
+          style={{ bottom: "10%" }}
+        >
           {[6, 14, 8, 16, 6].map((h, i) => (
-            <div key={i} className="eq-bar rounded-sm bg-[#d4718a]"
-              style={{ width: 3, height: h, animationDelay: `${i * 0.15}s`, animationDuration: "0.8s" }} />
+            <div
+              key={i}
+              className="eq-bar rounded-sm bg-[#d4718a]"
+              style={{ width: 3, height: h, animationDelay: `${i * 0.15}s`, animationDuration: "0.8s" }}
+            />
           ))}
         </div>
       )}
 
-      {/* Barra progreso */}
-      <div className="absolute bottom-0 left-0 right-0 overflow-hidden transition-opacity duration-300"
-        style={{ height: 3, background: "rgba(212,113,138,.15)", opacity: playing ? 1 : 0 }}>
-        <div className="h-full"
-          style={{ width: playing ? "60%" : "0%", background: "linear-gradient(90deg,#d4718a,#f0b8c8)", transition: "width 0.5s" }} />
+      {/* Barra de progreso */}
+      <div
+        className="absolute bottom-0 left-0 right-0 overflow-hidden transition-opacity duration-300"
+        style={{ height: 3, background: "rgba(212,113,138,.15)", opacity: playing ? 1 : 0 }}
+      >
+        <div
+          className="h-full"
+          style={{
+            width: playing ? "60%" : "0%",
+            background: "linear-gradient(90deg,#d4718a,#f0b8c8)",
+            transition: "width 0.5s",
+          }}
+        />
       </div>
 
-      {/* Indicador cargando */}
-      {!ready && (
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 pointer-events-none">
-          <span className="font-lato text-[2.5vw] text-[#d4718a] opacity-50">♪ cargando...</span>
-        </div>
-      )}
-
-      {/* SoundCloud iframe */}
+      {/* SoundCloud iframe oculto */}
       <iframe
         ref={iframeRef}
         src={SC_EMBED}
