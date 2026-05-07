@@ -3,225 +3,134 @@
 
 ---
 
-## 🏗 Arquitectura — Decisiones clave
+## 🏗 Decisiones de arquitectura
 
 ### ✅ Next.js > HTML puro para producción
-HTML puro tiene fricciones serias en Vercel: routing manual con `vercel.json`, 
-sin serverless functions, sin caché inteligente, sin build optimizado.
-Next.js es serverless por default en Vercel — zero config, rutas automáticas.
+HTML puro tiene fricciones en Vercel: routing manual, sin serverless functions, sin caché.
+Next.js es serverless por default — zero config, rutas automáticas, build optimizado.
 
 ### ✅ Cloudinary > base64 para imágenes
-Base64 fue un parche para desarrollo local sin servidor.
-En producción: imágenes en Cloudinary con URL pública + CDN global.
-Resultado: HTML de 50KB vs 1.4MB, lazy loading, optimización por dispositivo.
+Base64 = parche para prototipos locales. En producción: Cloudinary con URL pública + CDN.
+HTML de 50KB vs 1.4MB. Lazy loading, optimización automática por dispositivo.
 
-### ✅ Supabase para todo el backend
-Auth + BD + Storage + Realtime en un solo servicio.
-Free tier suficiente para los primeros 100 clientes.
+### ✅ SoundCloud Widget API > YouTube IFrame para música
+YouTube error 150 = video bloqueado para embedding por el artista.
+SoundCloud Widget API via postMessage funciona sin restricciones.
+Usar `SC.Widget(iframe)` con el SDK cargado dinámicamente.
 
 ### ✅ Un solo repo, múltiples subdominios
-`invita.creatuimagen.online` y `perfil.creatuimagen.online` 
-viven en el mismo repo Next.js.
+`invitaciones.creatuimagen.online` vive en `creandovaloria/creatuimagen-platform`.
 Vercel maneja múltiples dominios por proyecto sin costo extra.
 
-### ✅ Serverless Functions para toda lógica sensible
-Credenciales NUNCA en el HTML público.
-El HTML solo conoce la URL de la API — la API tiene las keys.
-CORS configurado para solo aceptar los dominios propios.
+### ✅ Serverless Functions para lógica sensible
+Credenciales NUNCA en el HTML. El HTML solo conoce la URL de la API.
 
 ---
 
-## 🐛 Errores encontrados y soluciones
+## 🐛 Errores y soluciones
 
-### Error 1 — Imágenes no visibles en el navegador
-**Causa:** HTML usaba rutas `/mnt/user-data/uploads/` (ruta local del servidor de Claude).  
-**Solución:** Convertir a base64 para prototipo local.  
-**Solución correcta en prod:** Cloudinary con URL pública.  
-**Aprendizaje:** Siempre verificar con `ls /mnt/user-data/uploads/` que el archivo existe antes de procesarlo.
+### Error 1 — Imágenes no visibles en navegador
+**Causa:** Rutas `/mnt/user-data/uploads/` no accesibles desde browser.
+**Solución prod:** Cloudinary con URL pública.
+**Solución prototipo:** base64 embebido.
 
 ### Error 2 — Countdown encimado sobre imagen
-**Causa:** `position: absolute` sobre imagen del calendario causaba superposición.  
-**Solución:** Construir calendario en HTML/CSS (grid 7 columnas) y countdown como elemento de flujo normal debajo.  
-**Aprendizaje:** Elementos interactivos y en tiempo real siempre en código, no sobre imágenes.
+**Causa:** `position: absolute` sobre imagen del calendario.
+**Solución:** Construir calendario en HTML/CSS y countdown como elemento de flujo normal debajo.
 
 ### Error 3 — 404 en Vercel con HTML estático
-**Causa:** `vercel.json` con `@vercel/static` no sirve archivos correctamente en todas las configuraciones.  
-**Solución:** `index.html` en la raíz del repo sin `vercel.json` — Vercel lo detecta automáticamente.  
-**Solución correcta:** Usar Next.js desde el inicio — zero config routing.
+**Causa:** `vercel.json` con `@vercel/static` no funciona correctamente.
+**Solución:** Next.js desde el inicio — zero config routing.
 
 ### Error 4 — Play/pause toggle desincronizado
-**Causa:** Variable local `isPlaying` no refleja el estado real del player de YouTube.  
-**Solución:** Consultar `player.getPlayerState() === YT.PlayerState.PLAYING` directamente.  
-**Aprendizaje:** Siempre usar la fuente de verdad del componente externo, no una variable local.
+**Causa:** Variable local `isPlaying` no refleja estado real del player.
+**Solución:** `player.getPlayerState() === 1` directamente.
 
 ### Error 5 — Repo con carpetas de otros proyectos
-**Causa:** El repo `invitaciones` ya tenía contenido de otros proyectos (admin, landing, supabase, web).  
-**Solución:** Repo nuevo dedicado por producto.  
-**Aprendizaje:** Un repo por producto/dominio. Estructura clara desde el inicio.
+**Causa:** Repo `invitaciones` ya tenía contenido previo.
+**Solución:** Repo nuevo `creatuimagen-platform` dedicado.
 
 ### Error 6 — Token GitHub en el chat
-**Situación:** El token `ghp_...` se compartió en el chat para autenticar la API de GitHub.  
-**Riesgo:** Tokens en texto plano en conversaciones.  
-**Solución futura:** Usar GitHub Apps o secrets de Vercel para automatización.  
-**Acción inmediata:** Revocar el token usado una vez terminada la sesión.
+**Riesgo:** Tokens en texto plano. Revocar después de cada sesión.
+
+### Error 7 — Imágenes cortadas en hero section
+**Causa:** `object-cover` + altura fija recorta imágenes.
+**Solución:** NO usar altura fija. Dejar proporción natural. Usar ScrollHint para indicar scroll.
+
+### Error 8 — YouTube error 150 → RESUELTO con SoundCloud
+**Causa:** Icona Pop bloquea embedding en YouTube (error 150).
+**Solución:** SoundCloud Widget API. Track oficial Big Beat Records.
+**URL:** `https://soundcloud.com/wearebigbeat/icona-pop-i-love-it-feat-charli-xcx`
+**Implementación:** iframe oculto + `SC.Widget(iframe)` + bind READY/PLAY/PAUSE/FINISH.
+
+### Error 9 — Module not found en Vercel pero no en local
+**Causa:** Archivo creado localmente pero no incluido en push a GitHub.
+**Prevención:** Subir archivos nuevos al repo inmediatamente al crearlos.
+
+### Error 10 — Primer click no reproduce en iOS/iPadOS
+**Causa:** Safari requiere user gesture directo. postMessage no cuenta.
+**Solución:** `pendingPlay` ref — si el usuario clickea antes del READY event, se reproduce automáticamente al disparar READY.
 
 ---
 
-## 💡 Decisiones de producto
+## 🎯 Prompts óptimos
 
-### Base64 — para qué sirve realmente
-- ✅ Prototipar sin servidor
-- ✅ Ver diseño en local sin infraestructura
-- ✅ Compartir un archivo HTML autónomo por WhatsApp
-- ❌ Producción (lento, sin caché, difícil de mantener)
-
-### HTML puro vs Next.js
-| | HTML puro | Next.js |
-|--|-----------|---------|
-| Prototipo rápido | ✅ | ⚠️ |
-| Producción | ❌ | ✅ |
-| Serverless | ❌ | ✅ nativo |
-| Routing | Manual | Automático |
-| Deploy Vercel | Fricción | Zero config |
-| Multi-tenant | Imposible | ✅ |
-
-### Arquitectura multi-tenant
-Cada evento/perfil es un registro en Supabase con un `slug` único.
-Una sola plantilla Next.js sirve a todos los clientes.
-```
-/[slug]/page.tsx → busca en BD por slug → renderiza con esos datos
-```
-
-### Música en invitaciones
-- YouTube IFrame API: reproduce audio sin mostrar video (`playsinline: 1`)
-- iOS requiere user gesture antes de reproducir (no autoplay sin clic)
-- `player.getPlayerState()` es la fuente de verdad para play/pause
-
-### Video en invitaciones
-- Videos cortos (<30s): Cloudinary (optimiza por dispositivo)
-- Videos largos: Mux o YouTube unlisted
-- Animaciones: Lottie (JSON ~50-200KB, sin restricciones de autoplay)
-- Slideshow: CSS animations (0KB extra, máximo impacto)
-
-### VCF — tarjeta de contacto digital
-- Generado dinámicamente por serverless function desde Supabase
-- Si el cliente cambia su teléfono → actualiza en BD → VCF siempre correcto
-- No es PWA — es simplemente un archivo `.vcf` descargable
-
----
-
-## 🎯 Prompt óptimo para invitaciones
-
+### Para nueva invitación
 ```
 Crea un componente Next.js mobile-first para invitación digital de [tipo].
 Stack: Next.js 14 App Router, Tailwind CSS, Cloudinary para imágenes.
 
 Datos:
 - Festejado/a: [nombre]
-- Fecha: [fecha ISO 8601]  
-- Lugar: [nombre completo + dirección]
-- Canción: [canción] YouTube ID: [ID]
-- RSVP: wa.me/[número]?text=[mensaje preescrito]
+- Fecha: [fecha ISO]
+- Lugar: [nombre + dirección] o porDefinir=true
+- Canción: [canción] — SoundCloud URL: [url]
+- RSVP WhatsApp: [número] — Mensaje: [texto]
 - Imágenes Cloudinary: [URLs por sección]
+- Secciones: intro → música → calendario+countdown → fotos → dresscode → lugar → rsvp → footer
 
-Secciones en orden: [lista]
-
-Animaciones requeridas:
-- Pétalos CSS cayendo al abrir (position: fixed, z-index alto)
-- Slideshow fade entre fotos del collage
-- Countdown en vivo con setInterval
-- Ecualizador animado mientras suena música
-
-Serverless:
-- POST /api/rsvp → guarda en Supabase
-- GET analytics al cargar → POST /api/track
-
-Footer: "Realizado por arturobarrios.com · Liz Barron Event Planner"
-Sin base64. Sin HTML puro. Todo en componentes React.
-```
-
-## 🎯 Prompt óptimo para perfiles digitales
-
-```
-Crea un componente Next.js mobile-first para perfil digital tipo linktree.
-Stack: Next.js 14, Tailwind CSS, Supabase para datos.
-
-Datos del perfil:
-- Nombre: [nombre]
-- Slug: [slug-url]
-- Foto: [URL Cloudinary]
-- Bio: [texto corto]
-- Links: [lista con label, url, icono]
-- Colores: [primario, secundario, fondo]
-
-Funcionalidades:
-- Botón "Guardar Contacto" → fetch /api/contacto/[slug] → descarga .vcf
-- El .vcf se genera en serverless desde Supabase (teléfono, email, web, foto)
-- Analytics: POST /api/track en cada visita y click de link
-
-Mobile-first, compartible por WhatsApp, sin base64.
+Animaciones: pétalos CSS, scroll reveal, ecualizador cuando suena música.
+Footer: "arturobarrios.com · Liz Barron Event Planner"
+Sin base64. Sin HTML puro. Componentes React separados.
 ```
 
 ---
 
-## 🚀 Configuración DNS Namecheap
+## 🚀 Stack de producción
 
-### creatuimagen.online
-```
-CNAME  invita      → cname.vercel-dns.com
-CNAME  perfil      → cname.vercel-dns.com  
-CNAME  dashboard   → cname.vercel-dns.com
-```
-
-### arturobarrios.com
-```
-CNAME  invitaciones → cname.vercel-dns.com (redirect a creatuimagen)
-```
-
----
-
-## 📦 Funcionalidades visuales — tabla de referencia
-
-| Funcionalidad | CSS | JS | Librería | Peso | Prioridad |
-|--------------|-----|-----|---------|------|-----------|
-| Pétalos cayendo | ✅ | mínimo | — | ~0KB | 🔴 MVP |
-| Slideshow fade | ✅ | — | — | ~0KB | 🔴 MVP |
-| Countdown | — | ✅ nativo | — | ~1KB | 🔴 MVP |
-| Música oculta | — | ✅ | YouTube API | ext | 🔴 MVP |
-| Scroll reveal | — | ✅ | IntersectionObserver | ~1KB | 🟡 V2 |
-| Confeti | ✅ | mínimo | — | ~2KB | 🟡 V2 |
-| Parallax | ✅ | mínimo | — | ~1KB | 🟡 V2 |
-| Lottie animaciones | — | — | lottie-web | ~60KB | 🟡 V2 |
-| Video background | — | — | Cloudinary | ext | 🟢 V3 |
-| Partículas | — | ✅ | Canvas API | ~5KB | 🟢 V3 |
+| Capa | Tecnología | Estado |
+|------|-----------|--------|
+| Framework | Next.js 14 App Router | ✅ |
+| Hosting | Vercel (Creando Valor IA) | ✅ |
+| Repo | creandovaloria/creatuimagen-platform | ✅ |
+| Dominio | invitaciones.creatuimagen.online | ✅ |
+| Imágenes | Cloudinary (dl66zeuix) | ✅ |
+| Música | SoundCloud Widget API | ✅ |
+| Base de datos | Supabase | 🔜 |
+| Pagos | Stripe | 🔜 |
+| WhatsApp | Meta Business API | 🔜 |
 
 ---
 
-## 🔐 Seguridad
+## 📐 Cloudinary — Cloud: dl66zeuix
 
-- Nunca credenciales en HTML público
-- Tokens de GitHub: revocar después de cada sesión de trabajo con Claude
-- CORS: whitelist solo de dominios propios en las API routes
-- Supabase RLS (Row Level Security) habilitado desde el inicio
-- Variables de entorno en Vercel Settings, nunca en el repo
+### XV-Regina
+| Imagen | URL |
+|--------|-----|
+| intro | `f_auto,q_auto/v1778143812/1.1_1_Intro_qw3b4e.png` |
+| musica | `f_auto,q_auto/v1778144448/1.1_2_Reproductor_buyhad.png` |
+| collage | `f_auto,q_auto/v1778145447/1.1_4_Collage_Polaroid_fupy5g.png` |
+| tira | `f_auto,q_auto/v1778145084/1.1_6_Tira_mkxcnh.jpg` |
+| flamingo | `f_auto,q_auto/v1778145782/1.1_7_Flamingo_gpdtsc.png` |
+| restaurante | pendiente |
+
+Base URL: `https://res.cloudinary.com/dl66zeuix/image/upload/`
 
 ---
 
-## 🐛 Errores en producción — Next.js + Vercel
-
-### Error 7 — Imágenes se cortan en hero section
-**Causa:** Usar `object-cover` + altura fija (`vh`) recorta las imágenes que tienen proporciones distintas al contenedor.  
-**Intentos fallidos:**
-- `max-height: 55vh` → corta la imagen
-- `height: 100svh` con flex 58/42 → sigue cortando porque las imágenes no tienen esa proporción
-**Solución correcta:** NO usar altura fija en imágenes. Dejar que cada imagen fluya con su proporción natural (`width: 100%, height: auto`). Para que ambas quepan en pantalla, reducir el tamaño con `max-height` pero con `object-contain`, no `object-cover`.  
-**Aprendizaje:** Las imágenes de invitaciones son assets de diseño con proporciones fijas — nunca forzar altura. Mejor solución: scroll hint (flecha animada) para indicar que hay más contenido abajo.
-
-### Error 8 — YouTube IFrame API no reproduce en producción
-**Causa:** El `div` target del player no existe en el DOM cuando `YT.Player()` se ejecuta en Next.js SSR/Static.  
-**Síntoma:** No pasa nada al dar click, sin errores visibles.  
-**Intentos:**
-- `id="yt-iframe"` en JSX estático → no funciona con SSR
-- `document.createElement` + append → mejora pero sigue fallando
-**Pendiente de resolver:** Probar con `useRef` directo como target del player en lugar de buscar por ID.  
-**Alternativa si YT sigue fallando:** SoundCloud embed oculto o Spotify iFrame API.
+## 🗓 Evento XV Regina
+- **Fecha:** 6 de Junio 2026, 4:00 pm
+- **Lugar:** Por definir
+- **RSVP:** Liz Barron +524272199374
+- **URL:** invitaciones.creatuimagen.online/XV-Regina
+- **Canción:** I Love It — Icona Pop ft. Charli XCX
