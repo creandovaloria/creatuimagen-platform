@@ -1,62 +1,74 @@
 export default function DressCode() {
   return (
-    <section className="bg-[#fff8fa] flex flex-col items-center px-6 py-12 gap-5 text-center reveal">
+    <section className="flex flex-col items-center px-6 py-10 gap-6 text-center reveal"
+      style={{ background: "#fff8fa" }}>
 
-      {/* Título */}
-      <span className="font-dancing text-[11vw] text-[#c0486a] leading-none">
-        Dress Code
-      </span>
-
-      {/* Subtítulo */}
-      <p className="font-playfair text-[5vw] text-[#2a1a1f] italic leading-snug">
-        ¡Vístete fabuloso!<br />
-        <span className="font-bold not-italic">Cóctel elegante</span>
-      </p>
-
-      {/* Separador */}
-      <div className="flex items-center gap-3 w-full max-w-xs">
-        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
-        <span className="text-[4vw] text-[#e8a0b0]">✦</span>
-        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
+      {/* Header */}
+      <div className="flex flex-col items-center gap-1">
+        <span className="font-dancing text-[12vw] text-[#c0486a] leading-none">
+          Dress Code
+        </span>
+        <div className="flex items-center gap-3 w-full mt-1">
+          <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
+          <span className="font-lato text-[3vw] tracking-[4px] text-[#b5566e] uppercase">Cóctel Elegante</span>
+          <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
+        </div>
       </div>
 
-      {/* Aviso rosa */}
-      <div className="bg-[#fde8ed] border border-[#f0b8c8] rounded-2xl px-6 py-4 max-w-xs w-full">
-        <p className="font-lato text-[4vw] text-[#b5566e] font-bold leading-relaxed">
-          🌸 ¡Reserva el rosa para la quinceañera! 🌸
-        </p>
+      {/* Card principal */}
+      <div className="w-full max-w-xs flex flex-col gap-5">
+
+        {/* Vístete fabuloso */}
+        <div className="bg-white rounded-3xl px-6 py-5 shadow-sm border border-[#f5c2d0]">
+          <p className="font-playfair text-[5.5vw] text-[#2a1a1f] italic leading-snug">
+            "¡Vístete fabuloso<br />y a brillar!"
+          </p>
+        </div>
+
+        {/* Aviso rosa */}
+        <div className="rounded-3xl px-6 py-5 border-2 border-[#f0b8c8]"
+          style={{ background: "linear-gradient(135deg, #fde8ed, #fff0f4)" }}>
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-[5vw]">🌸</span>
+            <p className="font-lato font-bold text-[4vw] text-[#b5566e] tracking-wide uppercase">
+              Color reservado
+            </p>
+            <span className="text-[5vw]">🌸</span>
+          </div>
+          <p className="font-lato text-[3.8vw] text-[#6b4a52] leading-relaxed">
+            El <strong className="text-[#c0486a]">rosa</strong> es exclusivo<br />
+            para la quinceañera.<br />
+            <span className="font-bold">¡Favor de evitarlo! 🚫</span>
+          </p>
+        </div>
+
+        {/* Chicas */}
+        <div className="bg-white rounded-3xl px-6 py-5 shadow-sm border border-[#f5c2d0] flex flex-col gap-2">
+          <div className="flex items-center gap-2 justify-center">
+            <span className="text-[6vw]">💃</span>
+            <span className="font-dancing text-[7vw] text-[#c0486a]">Chicas</span>
+          </div>
+          <p className="font-lato text-[4vw] text-[#6b4a52] leading-relaxed">
+            Vestiditos lindos <strong>midi o cortos</strong>,<br />
+            tacones o flats elegantes,<br />
+            ¡es momento de brillar! ✨
+          </p>
+        </div>
+
+        {/* Chicos */}
+        <div className="bg-white rounded-3xl px-6 py-5 shadow-sm border border-[#f5c2d0] flex flex-col gap-2">
+          <div className="flex items-center gap-2 justify-center">
+            <span className="text-[6vw]">🎉</span>
+            <span className="font-dancing text-[7vw] text-[#c0486a]">Chicos</span>
+          </div>
+          <p className="font-lato text-[4vw] text-[#6b4a52] leading-relaxed">
+            <strong>Traje oscuro + corbata</strong>,<br />
+            o saco con pantalón de vestir,<br />
+            ¡listos para la fiesta!
+          </p>
+        </div>
+
       </div>
-
-      {/* Separador */}
-      <div className="flex items-center gap-3 w-full max-w-xs">
-        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
-        <span className="text-[4vw] text-[#e8a0b0]">✦</span>
-        <div className="flex-1 h-[1px] bg-[#f0b8c8]" />
-      </div>
-
-      {/* Chicas */}
-      <div className="flex flex-col items-center gap-2 max-w-xs">
-        <span className="text-[8vw]">💃</span>
-        <p className="font-lato text-[4vw] text-[#3a1a22] leading-relaxed">
-          <span className="font-bold text-[#c0486a]">✨ Chicas:</span><br />
-          Vestiditos lindos midi o cortos,<br />
-          ¡a brillar!
-        </p>
-      </div>
-
-      {/* Separador suave */}
-      <div className="w-8 h-[1px] bg-[#f0b8c8]" />
-
-      {/* Chicos */}
-      <div className="flex flex-col items-center gap-2 max-w-xs">
-        <span className="text-[8vw]">🎉</span>
-        <p className="font-lato text-[4vw] text-[#3a1a22] leading-relaxed">
-          <span className="font-bold text-[#c0486a]">Chicos:</span><br />
-          Traje oscuro + corbata,<br />
-          ¡listos para la fiesta!
-        </p>
-      </div>
-
     </section>
   );
 }
