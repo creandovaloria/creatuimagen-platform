@@ -204,3 +204,24 @@ CNAME  invitaciones → cname.vercel-dns.com (redirect a creatuimagen)
 - CORS: whitelist solo de dominios propios en las API routes
 - Supabase RLS (Row Level Security) habilitado desde el inicio
 - Variables de entorno en Vercel Settings, nunca en el repo
+
+---
+
+## 🐛 Errores en producción — Next.js + Vercel
+
+### Error 7 — Imágenes se cortan en hero section
+**Causa:** Usar `object-cover` + altura fija (`vh`) recorta las imágenes que tienen proporciones distintas al contenedor.  
+**Intentos fallidos:**
+- `max-height: 55vh` → corta la imagen
+- `height: 100svh` con flex 58/42 → sigue cortando porque las imágenes no tienen esa proporción
+**Solución correcta:** NO usar altura fija en imágenes. Dejar que cada imagen fluya con su proporción natural (`width: 100%, height: auto`). Para que ambas quepan en pantalla, reducir el tamaño con `max-height` pero con `object-contain`, no `object-cover`.  
+**Aprendizaje:** Las imágenes de invitaciones son assets de diseño con proporciones fijas — nunca forzar altura. Mejor solución: scroll hint (flecha animada) para indicar que hay más contenido abajo.
+
+### Error 8 — YouTube IFrame API no reproduce en producción
+**Causa:** El `div` target del player no existe en el DOM cuando `YT.Player()` se ejecuta en Next.js SSR/Static.  
+**Síntoma:** No pasa nada al dar click, sin errores visibles.  
+**Intentos:**
+- `id="yt-iframe"` en JSX estático → no funciona con SSR
+- `document.createElement` + append → mejora pero sigue fallando
+**Pendiente de resolver:** Probar con `useRef` directo como target del player en lugar de buscar por ID.  
+**Alternativa si YT sigue fallando:** SoundCloud embed oculto o Spotify iFrame API.
