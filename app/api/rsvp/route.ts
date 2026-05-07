@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkExistingRSVP, insertRSVP, updateRSVP } from '@/lib/supabase'
+import { sendMailLiz, sendWALiz } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,31 +14,58 @@ export async function POST(request: NextRequest) {
     const eventoSlug = 'XV-Regina'
     const telefonoLimpio = telefono.replace(/\D/g, '')
 
-    const { data: existing } = await checkExistingRSVP(eventoSlug, telefonoLimpio)
-
-    if (existing) {
-      const { data, error } = await updateRSVP(eventoSlug, telefonoLimpio, {
-        nombre: nombre.trim(),
-        asiste,
-        num_personas: asiste ? (num_personas || 1) : 0,
-        restricciones: restricciones?.trim() || null,
-        mensaje_regina: mensaje_regina?.trim() || null,
-      })
-      if (error) throw error
-      return NextResponse.json({ success: true, action: 'updated', data })
-    }
-
-    const { data, error } = await insertRSVP({
-      evento_slug: eventoSlug,
+    const payload = {
       nombre: nombre.trim(),
       telefono: telefonoLimpio,
       asiste,
       num_personas: asiste ? (num_personas || 1) : 0,
       restricciones: restricciones?.trim() || null,
       mensaje_regina: mensaje_regina?.trim() || null,
-    })
+      evento_slug: eventoSlug,
+      action: 'created' as const,
+    }
+
+    // Verificar duplicado
+    const { data: existing } = await checkExistingRSVP(eventoSlug, telefonoLimpio)
+
+    let data, error, action
+
+    if (existing) {
+      // Actualizar
+      const result = await updateRSVP(eventoSlug, telefonoLimpio, {
+        nombre: payload.nombre,
+        asiste: payload.asiste,
+        num_personas: payload.num_personas,
+        restricciones: payload.restricciones,
+        mensaje_regina: payload.mensaje_regina,
+      })
+      data = result.data; error = result.error; action = 'updated'
+    } else {
+      // Insertar
+      const result = await insertRSVP({
+        evento_slug: eventoSlug,
+        nombre: payload.nombre,
+        telefono: payload.telefono,
+        asiste: payload.asiste,
+        num_personas: payload.num_personas,
+        restricciones: payload.restricciones,
+        mensaje_regina: payload.mensaje_regina,
+      })
+      data = result.data; error = result.error; action = 'created'
+    }
+
     if (error) throw error
-    return NextResponse.json({ success: true, action: 'created', data })
+
+    // Notificaciones en paralelo (no bloqueantes)
+    const notifPayload = { ...payload, action: action as 'created' | 'updated' }
+    Promise.allSettled([
+      sendMailLiz(notifPayload),
+      sendWALiz(notifPayload),
+    ]).then(results => {
+      console.log('Notificaciones:', results.map(r => r.status))
+    })
+
+    return NextResponse.json({ success: true, action, data })
 
   } catch (error: any) {
     console.error('RSVP error:', error)
