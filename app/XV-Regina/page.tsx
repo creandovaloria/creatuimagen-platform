@@ -13,7 +13,7 @@ import { images } from "@/lib/regina-images";
 
 export const metadata: Metadata = {
   title: "XV Años – Regina 🎀",
-  description: "¡Estás invitado a celebrar los XV años de Regina! 23 de Mayo 2026 · Limmon · San Juan del Río",
+  description: "¡Estás invitado a celebrar los XV años de Regina! 6 de Junio 2026",
 };
 
 export default function XVRegina() {
@@ -21,10 +21,9 @@ export default function XVRegina() {
     <main className="relative w-full overflow-x-hidden bg-[#fdf0f3]">
       <Petals />
 
-      {/* 1. INTRO — imagen completa sin cortar */}
+      {/* 1. INTRO */}
       <section className="w-full leading-none relative">
         <img src={images.intro} alt="Invitación XV años Regina" className="w-full h-auto block" />
-        {/* Flecha scroll hint */}
         <ScrollHint />
       </section>
 
@@ -32,20 +31,13 @@ export default function XVRegina() {
       <MusicPlayer src={images.musica} youtubeId="7kzPMz7bSGo" />
 
       {/* 3. CALENDARIO + COUNTDOWN */}
-      <CalendarioCountdown eventDate="2026-05-23T16:00:00" />
+      <CalendarioCountdown eventDate="2026-06-06T16:00:00" />
 
       {/* 4. COLLAGE */}
       <Collage src={images.collage} />
 
-      {/* 5. LUGAR DEL EVENTO */}
-      <Venue
-        src={images.restaurante}
-        nombre="Limmon"
-        direccion="Paso de los Guzmán 12, Centro, San Juan del Río, Qro."
-        fecha="Sábado 23 de Mayo, 2026"
-        hora="4:00 pm"
-        mapsUrl="https://maps.google.com/?q=Limmon+Paso+de+los+Guzman+12+Centro+76800+San+Juan+del+Rio+Qro"
-      />
+      {/* 5. LUGAR — por definir */}
+      <Venue porDefinir />
 
       {/* 6. TIRA FOTOGRÁFICA */}
       <Tira src={images.tira} />
