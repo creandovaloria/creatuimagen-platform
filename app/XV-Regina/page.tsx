@@ -8,6 +8,7 @@ import Tira from "@/components/invitaciones/Tira";
 import RSVP from "@/components/invitaciones/RSVP";
 import Footer from "@/components/invitaciones/Footer";
 import ScrollReveal from "@/components/invitaciones/ScrollReveal";
+import ScrollHint from "@/components/invitaciones/ScrollHint";
 import { images } from "@/lib/regina-images";
 
 export const metadata: Metadata = {
@@ -20,32 +21,23 @@ export default function XVRegina() {
     <main className="relative w-full overflow-x-hidden bg-[#fdf0f3]">
       <Petals />
 
-      {/* ── HERO: intro + música en 100vh, ambas completas ── */}
-      <section
-        className="w-full flex flex-col"
-        style={{ height: "100svh" }}
-      >
-        {/* Intro: ocupa 58% del alto */}
-        <div className="w-full overflow-hidden" style={{ flex: "0 0 58%" }}>
-          <img
-            src={images.intro}
-            alt="Invitación XV años Regina"
-            className="w-full h-full object-cover object-top"
-          />
-        </div>
-
-        {/* Música: ocupa 42% del alto */}
-        <div className="w-full overflow-hidden" style={{ flex: "0 0 42%" }}>
-          <MusicPlayer
-            src={images.musica}
-            youtubeId="7kzPMz7bSGo"
-          />
-        </div>
+      {/* 1. INTRO — imagen completa sin cortar */}
+      <section className="w-full leading-none relative">
+        <img src={images.intro} alt="Invitación XV años Regina" className="w-full h-auto block" />
+        {/* Flecha scroll hint */}
+        <ScrollHint />
       </section>
 
-      {/* ── RESTO DE LA INVITACIÓN ── */}
+      {/* 2. MÚSICA */}
+      <MusicPlayer src={images.musica} youtubeId="7kzPMz7bSGo" />
+
+      {/* 3. CALENDARIO + COUNTDOWN */}
       <CalendarioCountdown eventDate="2026-05-23T16:00:00" />
+
+      {/* 4. COLLAGE */}
       <Collage src={images.collage} />
+
+      {/* 5. LUGAR DEL EVENTO */}
       <Venue
         src={images.restaurante}
         nombre="Limmon"
@@ -54,12 +46,17 @@ export default function XVRegina() {
         hora="4:00 pm"
         mapsUrl="https://maps.google.com/?q=Limmon+Paso+de+los+Guzman+12+Centro+76800+San+Juan+del+Rio+Qro"
       />
+
+      {/* 6. TIRA FOTOGRÁFICA */}
       <Tira src={images.tira} />
+
+      {/* 7. RSVP */}
       <RSVP
         src={images.flamingo}
         whatsapp="524272199374"
         mensaje="Hola Liz Barrón, te escribo referente a mi asistencia/inasistencia a la fiesta de Regina 🎀 Mi nombre es: "
       />
+
       <Footer />
       <ScrollReveal />
     </main>
