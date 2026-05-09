@@ -72,3 +72,6 @@ export async function getDashboardStats(eventoSlug: string) {
     .maybeSingle()
   return { data, error }
 }
+
+// Nota: agregar columna email a la tabla rsvp en Supabase:
+// ALTER TABLE rsvp ADD COLUMN IF NOT EXISTS email text;
