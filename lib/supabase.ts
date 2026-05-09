@@ -11,17 +11,38 @@ function getSupabase() {
   return _supabase
 }
 
+export interface EventoData {
+  slug: string
+  festejado: string
+  fecha: string
+  hora: string
+  lugar?: string
+  planner_nombre?: string
+  planner_email?: string
+  planner_phone?: string
+}
+
 export interface RSVPData {
   id?: string
   evento_slug: string
   nombre: string
   telefono: string
+  email?: string | null
   asiste: boolean
   num_personas: number
   restricciones?: string | null
   mensaje_regina?: string | null
-  created_at?: string
-  updated_at?: string
+}
+
+// Obtener evento con datos del planner
+export async function getEvento(slug: string) {
+  const sb = getSupabase()
+  const { data, error } = await sb
+    .from('eventos')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+  return { data: data as EventoData | null, error }
 }
 
 export async function checkExistingRSVP(eventoSlug: string, telefono: string) {
@@ -72,6 +93,3 @@ export async function getDashboardStats(eventoSlug: string) {
     .maybeSingle()
   return { data, error }
 }
-
-// Nota: agregar columna email a la tabla rsvp en Supabase:
-// ALTER TABLE rsvp ADD COLUMN IF NOT EXISTS email text;
