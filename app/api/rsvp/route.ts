@@ -1,68 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkExistingRSVP, insertRSVP, updateRSVP } from '@/lib/supabase'
-import { sendMailLiz, sendWALiz } from '@/lib/notifications'
+import { sendMailLiz, sendMailInvitado, sendWALiz, sendWAInvitado } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { nombre, telefono, asiste, num_personas, restricciones, mensaje_regina } = body
+    const { nombre, telefono, email, asiste, num_personas, restricciones, mensaje_regina } = body
 
     if (!nombre?.trim()) return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
     if (!telefono?.trim()) return NextResponse.json({ error: 'Teléfono requerido' }, { status: 400 })
     if (asiste === undefined) return NextResponse.json({ error: 'Confirma tu asistencia' }, { status: 400 })
 
-    const eventoSlug = 'XV-Regina'
+    const eventoSlug   = 'XV-Regina'
     const telefonoLimpio = telefono.replace(/\D/g, '')
 
-    const payload = {
-      nombre: nombre.trim(),
-      telefono: telefonoLimpio,
+    const rsvpData = {
+      nombre:         nombre.trim(),
+      telefono:       telefonoLimpio,
+      email:          email?.trim() || null,
       asiste,
-      num_personas: asiste ? (num_personas || 1) : 0,
-      restricciones: restricciones?.trim() || null,
+      num_personas:   asiste ? (num_personas || 1) : 0,
+      restricciones:  restricciones?.trim() || null,
       mensaje_regina: mensaje_regina?.trim() || null,
-      evento_slug: eventoSlug,
-      action: 'created' as const,
     }
 
-    // Verificar duplicado
+    // Verificar duplicado por teléfono
     const { data: existing } = await checkExistingRSVP(eventoSlug, telefonoLimpio)
 
-    let data, error, action
+    let data, error, action: 'created' | 'updated'
 
     if (existing) {
-      // Actualizar
-      const result = await updateRSVP(eventoSlug, telefonoLimpio, {
-        nombre: payload.nombre,
-        asiste: payload.asiste,
-        num_personas: payload.num_personas,
-        restricciones: payload.restricciones,
-        mensaje_regina: payload.mensaje_regina,
-      })
+      const result = await updateRSVP(eventoSlug, telefonoLimpio, rsvpData)
       data = result.data; error = result.error; action = 'updated'
     } else {
-      // Insertar
-      const result = await insertRSVP({
-        evento_slug: eventoSlug,
-        nombre: payload.nombre,
-        telefono: payload.telefono,
-        asiste: payload.asiste,
-        num_personas: payload.num_personas,
-        restricciones: payload.restricciones,
-        mensaje_regina: payload.mensaje_regina,
-      })
+      const result = await insertRSVP({ evento_slug: eventoSlug, ...rsvpData })
       data = result.data; error = result.error; action = 'created'
     }
 
     if (error) throw error
 
-    // Notificaciones en paralelo (no bloqueantes)
-    const notifPayload = { ...payload, action: action as 'created' | 'updated' }
+    // Notificaciones en paralelo — no bloquean la respuesta
+    const notifPayload = { ...rsvpData, evento_slug: eventoSlug, action }
     Promise.allSettled([
       sendMailLiz(notifPayload),
+      sendMailInvitado(notifPayload),
       sendWALiz(notifPayload),
+      sendWAInvitado(notifPayload),
     ]).then(results => {
-      console.log('Notificaciones:', results.map(r => r.status))
+      console.log('Notificaciones:', results.map((r, i) =>
+        `${['mailLiz','mailInv','waLiz','waInv'][i]}:${r.status}`
+      ).join(' | '))
     })
 
     return NextResponse.json({ success: true, action, data })
