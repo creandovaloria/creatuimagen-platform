@@ -134,3 +134,83 @@ Base URL: `https://res.cloudinary.com/dl66zeuix/image/upload/`
 - **RSVP:** Liz Barron +524272199374
 - **URL:** invitaciones.creatuimagen.online/XV-Regina
 - **Canción:** I Love It — Icona Pop ft. Charli XCX
+
+---
+
+## 🏗️ Decisiones de arquitectura — Escalabilidad
+
+### Decisión 10 — Datos del planner en Supabase, no en env vars
+**Problema:** Email y teléfono de Liz Barron estaban en variables de entorno (`LIZ_EMAIL`, `LIZ_PHONE`).  
+**Por qué es malo:** Para cada nuevo evento habría que agregar nuevas env vars en Vercel. No escala.  
+**Solución:** Los datos del planner van en la tabla `eventos` de Supabase:
+```sql
+eventos.planner_nombre
+eventos.planner_email
+eventos.planner_phone
+```
+**Beneficio:** Para un nuevo evento solo se inserta un registro en Supabase. Sin tocar código ni Vercel.
+
+### Decisión 11 — Twilio → Meta WhatsApp Business API
+**Problema:** Se había planificado Twilio para WhatsApp.  
+**Razón del cambio:** El cliente ya tiene cuenta de Meta Business verificada.  
+**Beneficio:** Sin costo adicional de Twilio, integración directa con la cuenta existente.  
+**Implementación:**
+```typescript
+// Meta Graph API v19.0
+POST https://graph.facebook.com/v19.0/{META_PHONE_ID}/messages
+Authorization: Bearer {META_WA_TOKEN}
+{ messaging_product: 'whatsapp', to: '521234567890', type: 'text', text: { body: msg } }
+```
+
+### Decisión 12 — Email desde dominio invitaciones.arturobarrios.com
+**Razón:** Plan gratuito de Resend permite 1 dominio. Ya estaba verificado `invitaciones.arturobarrios.com`.  
+**From:** `hola@invitaciones.arturobarrios.com`  
+**Cuando escale:** Agregar `creatuimagen.online` en plan Pro de Resend (~$20 USD/mes).
+
+### Decisión 13 — Variables de entorno mínimas (solo 5)
+**Variables reales en Vercel:**
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+RESEND_API_KEY
+META_WA_TOKEN
+META_WA_PHONE_ID
+```
+Todo lo demás (planner, festejado, fecha, lugar) viene de Supabase. Sin hardcodear nada.
+
+---
+
+## 🐛 Troubleshooting — Vercel deployments
+
+### Error 10 — Múltiples deployments en error por Supabase
+**Causa:** La API route `/api/rsvp` intentaba conectar a Supabase en build time, pero las env vars no estaban configuradas en Vercel.  
+**Síntoma:** 10+ deployments en rojo consecutivos.  
+**Solución:** Cliente de Supabase lazy-loaded — solo se inicializa en runtime cuando llega una request, no en build time.
+```typescript
+let _supabase: SupabaseClient | null = null
+function getSupabase() {
+  if (_supabase) return _supabase
+  // Solo se ejecuta cuando hay una request real
+  _supabase = createClient(url, key)
+  return _supabase
+}
+```
+**Prevención:** Agregar las env vars en Vercel ANTES de hacer el primer deploy con Supabase.
+
+### Error 11 — Build local exitoso pero Vercel en error
+**Causa frecuente:** Archivo nuevo creado localmente pero no incluido en el push a GitHub.  
+**Síntoma:** `Module not found` en Vercel, pero localmente compila sin problemas.  
+**Solución:** Verificar con `repo.get_contents()` que el archivo existe en el repo antes de continuar.  
+**Prevención:** Al crear un archivo nuevo, subirlo a GitHub inmediatamente.
+
+### Error 12 — YouTube error 150 en reproductor de música
+**Causa:** Icona Pop tiene embedding deshabilitado en todos sus videos de YouTube.  
+**Síntoma:** El player se inicializa (`YT Player ready ✅`) pero al reproducir aparece `YT Error: 150`.  
+**Solución:** Migrar a SoundCloud Widget API.
+```typescript
+// SoundCloud Widget SDK
+widget = SC.Widget(iframeRef)
+widget.bind(SC.Widget.Events.READY, () => setReady(true))
+widget.play() // funciona en iOS y Android
+```
+**Aprendizaje:** Antes de implementar, verificar si el video permite embed en `youtube.com/embed/{ID}`.
