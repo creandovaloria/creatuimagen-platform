@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { checkExistingRSVP, insertRSVP, updateRSVP } from '@/lib/supabase'
-import { sendMailLiz, sendMailInvitado, sendWALiz, sendWAInvitado } from '@/lib/notifications'
+import { checkExistingRSVP, insertRSVP, updateRSVP, getEvento } from '@/lib/supabase'
+import { sendMailPlanner, sendMailInvitado, sendWAPlanner, sendWAInvitado } from '@/lib/notifications'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { nombre, telefono, email, asiste, num_personas, restricciones, mensaje_regina } = body
 
-    if (!nombre?.trim()) return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
+    // Validaciones
+    if (!nombre?.trim())   return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
     if (!telefono?.trim()) return NextResponse.json({ error: 'Teléfono requerido' }, { status: 400 })
     if (asiste === undefined) return NextResponse.json({ error: 'Confirma tu asistencia' }, { status: 400 })
 
-    const eventoSlug   = 'XV-Regina'
+    const eventoSlug     = 'XV-Regina'
     const telefonoLimpio = telefono.replace(/\D/g, '')
+
+    // Obtener datos del evento y planner desde Supabase
+    const { data: evento, error: eventoError } = await getEvento(eventoSlug)
+    if (eventoError || !evento) return NextResponse.json({ error: 'Evento no encontrado' }, { status: 404 })
 
     const rsvpData = {
       nombre:         nombre.trim(),
@@ -24,7 +29,7 @@ export async function POST(request: NextRequest) {
       mensaje_regina: mensaje_regina?.trim() || null,
     }
 
-    // Verificar duplicado por teléfono
+    // Verificar duplicado
     const { data: existing } = await checkExistingRSVP(eventoSlug, telefonoLimpio)
 
     let data, error, action: 'created' | 'updated'
@@ -39,16 +44,27 @@ export async function POST(request: NextRequest) {
 
     if (error) throw error
 
+    // Payload de notificaciones — planner viene de Supabase, no de env vars
+    const notifPayload = {
+      ...rsvpData,
+      action,
+      festejado:      evento.festejado,
+      fecha:          evento.fecha,
+      hora:           evento.hora,
+      planner_nombre: evento.planner_nombre || '',
+      planner_email:  evento.planner_email  || '',
+      planner_phone:  evento.planner_phone  || '',
+    }
+
     // Notificaciones en paralelo — no bloquean la respuesta
-    const notifPayload = { ...rsvpData, evento_slug: eventoSlug, action }
     Promise.allSettled([
-      sendMailLiz(notifPayload),
+      sendMailPlanner(notifPayload),
       sendMailInvitado(notifPayload),
-      sendWALiz(notifPayload),
+      sendWAPlanner(notifPayload),
       sendWAInvitado(notifPayload),
     ]).then(results => {
-      console.log('Notificaciones:', results.map((r, i) =>
-        `${['mailLiz','mailInv','waLiz','waInv'][i]}:${r.status}`
+      console.log('Notif:', results.map((r, i) =>
+        `${['mailPlanner','mailInv','waPlanner','waInv'][i]}:${r.status}`
       ).join(' | '))
     })
 
