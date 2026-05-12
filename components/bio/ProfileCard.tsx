@@ -8,6 +8,15 @@ interface ProfileProps {
 }
 
 export default function ProfileCard({ profile }: ProfileProps) {
+  // Función para asegurar que el link sea externo
+  const ensureExternalLink = (url: string | null) => {
+    if (!url) return '#'
+    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:') || url.startsWith('tel:')) {
+      return url
+    }
+    return `https://${url}`
+  }
+
   return (
     <div className="w-full max-w-md bg-white/90 backdrop-blur-2xl border border-slate-100 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in zoom-in duration-500">
       {/* Banner / Top decorative section */}
@@ -51,7 +60,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           {profile.links.map((link) => (
             <a
               key={link.id}
-              href={link.url}
+              href={ensureExternalLink(link.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="group relative flex items-center p-5 rounded-2xl font-semibold transition-all duration-300 hover:scale-[1.02] active:scale-95 shadow-sm hover:shadow-md"
@@ -84,7 +93,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
         <div className="flex flex-wrap justify-center gap-5 mb-8">
           {profile.instagram && (
             <a 
-              href={profile.instagram} 
+              href={ensureExternalLink(profile.instagram)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className={`flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl ${!profile.usa_colores_tema ? 'bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888]' : ''}`} 
@@ -96,7 +105,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.linkedin && (
             <a 
-              href={profile.linkedin} 
+              href={ensureExternalLink(profile.linkedin)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
@@ -108,7 +117,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.whatsapp && (
             <a 
-              href={profile.whatsapp} 
+              href={ensureExternalLink(profile.whatsapp)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
@@ -120,7 +129,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.facebook && (
             <a 
-              href={profile.facebook} 
+              href={ensureExternalLink(profile.facebook)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
@@ -132,7 +141,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.tiktok && (
             <a 
-              href={profile.tiktok} 
+              href={ensureExternalLink(profile.tiktok)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
@@ -144,7 +153,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.youtube && (
             <a 
-              href={profile.youtube} 
+              href={ensureExternalLink(profile.youtube)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
