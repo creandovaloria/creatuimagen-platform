@@ -1,9 +1,10 @@
 # PRD — Product Requirements Document
 # creatuimagen.online
 
-**Versión:** 1.0  
+**Versión:** 1.1  
 **Fecha:** Mayo 2026  
 **Autor:** Arturo Barrios  
+**Última actualización:** MVP de Perfiles Digitales completado
 
 ---
 

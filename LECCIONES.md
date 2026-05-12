@@ -214,3 +214,88 @@ widget.bind(SC.Widget.Events.READY, () => setReady(true))
 widget.play() // funciona en iOS y Android
 ```
 **Aprendizaje:** Antes de implementar, verificar si el video permite embed en `youtube.com/embed/{ID}`.
+
+---
+
+## 🗃️ Sesión — Supabase Storage para fotos de perfil (Mayo 2026)
+
+### Decisión 14 — Supabase Storage > Cloudinary para fotos de perfil
+**Problema:** Cloudinary era el plan original, pero para el módulo Bio los avatares son simples JPGs.  
+**Solución:** Supabase Storage (bucket `avatars`) — ya incluido en el free tier, sin dependencia externa.  
+**Beneficio:** Sin API key adicional, mismo cliente que la BD, URL pública directa.  
+**Aprendizaje:** No sobre-ingeniear. Cloudinary tiene sentido para invitaciones (transformaciones, CDN). Para avatares simples, Supabase Storage es suficiente.
+
+### Decisión 15 — Límite de archivo por variable de entorno
+**Problema:** El free tier de Supabase tiene límite de storage (500MB).  
+**Solución:** Validar el peso del archivo en cliente con `NEXT_PUBLIC_MAX_UPLOAD_MB` antes del upload.
+```typescript
+const maxMb = Number(process.env.NEXT_PUBLIC_MAX_UPLOAD_MB || 2)
+if (file.size > maxMb * 1024 * 1024) {
+  setMessage(`❌ La imagen pesa más de ${maxMb}MB`)
+  return
+}
+```
+**Aprendizaje:** Los límites de negocio van en variables de entorno, nunca hardcodeados.
+
+### Decisión 16 — Campo `usa_colores_tema` para toggle de colores sociales
+**Problema:** Clientes quieren elegir entre íconos con colores corporativos (Instagram rosa, LinkedIn azul) o íconos monocromáticos con su color de tema.  
+**Solución:** Campo boolean en la tabla `perfiles`. `false` (default) = colores reales de la marca. `true` = usa `theme_primary`.  
+**Aprendizaje:** El default debe ser el que requiere menos acción del usuario. Los colores corporativos son más reconocibles, así que van de default.
+
+---
+
+## 🐛 Errores y soluciones — Sesión Mayo 2026
+
+### Error 13 — RLS bloqueando subida de fotos
+**Síntoma:** `❌ new row violates row-level security policy`  
+**Causa:** El bucket `avatars` existía pero no tenía políticas RLS para INSERT/UPDATE.  
+**Solución:** Crear políticas en Supabase SQL Editor:
+```sql
+CREATE POLICY "Permitir subida a avatars" 
+ON storage.objects FOR INSERT 
+TO public 
+WITH CHECK (bucket_id = 'avatars');
+
+CREATE POLICY "Permitir actualizar avatars" 
+ON storage.objects FOR UPDATE 
+TO public 
+WITH CHECK (bucket_id = 'avatars');
+```
+**Prevención:** Al crear un bucket nuevo, crear las 3 políticas (INSERT, UPDATE, SELECT) de inmediato.
+
+### Error 14 — Tarjeta pública completamente blanca
+**Síntoma:** La página `bio.creatuimagen.online/[slug]` cargaba sin datos (todo en blanco).  
+**Causa:** Desconexión entre los campos que retorna Supabase y las props que esperaba `ProfileCard`.  
+**Solución:** Pasar el objeto completo de Supabase directamente:
+```typescript
+// ❌ Mal — mapeo parcial que pierde campos
+<ProfileCard nombre={perfil.nombre} foto={perfil.foto_url} />
+
+// ✅ Bien — pasar el objeto completo
+<ProfileCard profile={{ ...perfil, links, vcf }} />
+```
+
+### Error 15 — Checkbox no actualizaba el estado del formulario
+**Síntoma:** El campo `usa_colores_tema` no guardaba su valor al hacer submit.  
+**Causa:** `handleChange` usaba `e.target.value` para todos los inputs, pero los checkboxes exponen el estado en `e.target.checked`.  
+**Solución:**
+```typescript
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const target = e.target;
+  const value = target.type === 'checkbox' ? (target as HTMLInputElement).checked : target.value;
+  setFormData(prev => ({ ...prev, [target.name]: value }))
+}
+```
+
+### Error 16 — Renombrado de columna SQL sin perder datos
+**Situación:** Se creó la columna con el nombre `usa_colores_originales` y luego se decidió renombrarla a `usa_colores_tema`.  
+**Solución correcta:** Usar RENAME COLUMN en lugar de DROP + ADD (que perdería datos):
+```sql
+-- ✅ Correcto — preserva datos
+ALTER TABLE perfiles RENAME COLUMN usa_colores_originales TO usa_colores_tema;
+
+-- ❌ Incorrecto — pierde datos
+ALTER TABLE perfiles DROP COLUMN usa_colores_originales;
+ALTER TABLE perfiles ADD COLUMN usa_colores_tema BOOLEAN DEFAULT false;
+```
+
