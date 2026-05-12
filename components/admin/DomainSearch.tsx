@@ -12,17 +12,22 @@ export default function DomainSearch() {
     if (!query) return
     
     setIsSearching(true)
-    // Por ahora simulamos la búsqueda hasta tener la API Key
-    setTimeout(() => {
+    setResult(null)
+
+    try {
+      const response = await fetch(`/api/domains/check?domain=${query}`)
+      const data = await response.json()
+      
       setResult({
-        domain: query.includes('.') ? query : `${query}.com`,
-        available: true,
-        price: 12.99,
-        margin: 5.00,
-        total: 17.99
+        domain: data.domain,
+        available: data.available,
+        total: data.price
       })
+    } catch (error) {
+      console.error('Error searching domain:', error)
+    } finally {
       setIsSearching(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -54,17 +59,25 @@ export default function DomainSearch() {
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm font-bold text-slate-900">{result.domain}</p>
-              <p className="text-xs text-green-600 font-medium">✨ Disponible para registro</p>
+              {result.available ? (
+                <p className="text-xs text-green-600 font-medium">✨ Disponible para registro</p>
+              ) : (
+                <p className="text-xs text-red-500 font-medium">❌ No disponible</p>
+              )}
             </div>
-            <div className="text-right">
-              <p className="text-lg font-black text-indigo-600">${result.total} USD</p>
-              <p className="text-[10px] text-slate-400">Incluye gestión y configuración</p>
-            </div>
+            {result.available && (
+              <div className="text-right">
+                <p className="text-lg font-black text-indigo-600">${result.total} USD</p>
+                <p className="text-[10px] text-slate-400">Incluye gestión y configuración</p>
+              </div>
+            )}
           </div>
           
-          <button className="w-full mt-4 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all">
-            Registrar y Configurar Vercel
-          </button>
+          {result.available && (
+            <button className="w-full mt-4 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-slate-800 transition-all">
+              Registrar y Configurar Vercel
+            </button>
+          )}
         </div>
       )}
     </section>
