@@ -8,15 +8,15 @@ interface ProfileFormProps {
 }
 
 const InputField = ({ label, name, type = "text", placeholder = "", value, onChange }: any) => (
-  <div>
-    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">{label}</label>
+  <div className="flex flex-col gap-1">
+    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{label}</label>
     <input 
       type={type} 
       name={name} 
       value={value || ''} 
       onChange={onChange}
       placeholder={placeholder}
-      className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700"
     />
   </div>
 )
@@ -57,49 +57,31 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      if (!e.target.files || e.target.files.length === 0) {
-        return
-      }
+      if (!e.target.files || e.target.files.length === 0) return
       const file = e.target.files[0]
-      
-      // Proteger el Free Tier: Límite configurable por variable de entorno (por defecto 2MB)
       const maxMb = Number(process.env.NEXT_PUBLIC_MAX_UPLOAD_MB || 2)
       if (file.size > maxMb * 1024 * 1024) {
-        setMessage(`❌ Error: La imagen pesa más de ${maxMb}MB. Sube una más ligera para no saturar el servidor.`)
+        setMessage(`❌ Error: La imagen pesa más de ${maxMb}MB.`)
         return
       }
       
       setIsUploading(true)
-      setMessage('')
-
-      // 1. Obtener cliente de Supabase
       const { createClient } = await import('@/lib/supabase/client')
       const supabase = createClient()
-
-      // 2. Crear nombre de archivo único
       const fileExt = file.name.split('.').pop()
-      const fileName = `${profile.slug}-${Math.random()}.${fileExt}`
-      const filePath = `${fileName}`
-
-      // 3. Subir a Supabase Storage (bucket "avatars")
+      const fileName = `${profile.slug}-${Date.now()}.${fileExt}`
+      
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file, { upsert: true })
+        .upload(fileName, file, { upsert: true })
 
-      if (uploadError) {
-        throw uploadError
-      }
+      if (uploadError) throw uploadError
 
-      // 4. Obtener URL pública
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(filePath)
-
-      // 5. Actualizar el estado del formulario con la nueva URL
+      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(fileName)
       setFormData(prev => ({ ...prev, foto_url: publicUrl }))
-      setMessage('✅ Foto subida correctamente (recuerda guardar los cambios abajo)')
+      setMessage('✅ Foto cargada. ¡No olvides guardar!')
     } catch (error: any) {
-      setMessage(`❌ Error al subir imagen: ${error.message}`)
+      setMessage(`❌ Error: ${error.message}`)
     } finally {
       setIsUploading(false)
     }
@@ -137,124 +119,146 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
       }
     )
     
-    if (error) {
-      setMessage(`❌ Error: ${error.message}`)
-    } else {
-      setMessage('✅ Perfil guardado con éxito')
-    }
+    if (error) setMessage(`❌ Error: ${error.message}`)
+    else setMessage('✅ Perfil actualizado correctamente')
     setIsSaving(false)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      
-      {/* SECCIÓN 1: Perfil Básico */}
-      <div className="space-y-4">
-        <h4 className="font-bold text-slate-800 border-b pb-2">1. Información Pública</h4>
-        <InputField label="Nombre (Display)" name="nombre" required value={formData.nombre} onChange={handleChange} />
-        <InputField label="Título Profesional / Rol" name="rol" required value={formData.rol} onChange={handleChange} />
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Biografía</label>
-          <textarea 
-            name="bio" 
-            value={formData.bio} 
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="max-w-4xl mx-auto pb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Upload Foto */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Foto de Perfil</label>
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0 h-16 w-16 rounded-full overflow-hidden border border-slate-200 bg-slate-100 flex items-center justify-center">
-              {formData.foto_url ? (
-                <img src={formData.foto_url} alt="Preview" className="h-full w-full object-cover" />
-              ) : (
-                <span className="text-2xl text-slate-400">👤</span>
-              )}
+        {/* Columna Izquierda: Formulario */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+            <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center text-sm">1</span>
+              Información del Perfil
+            </h4>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <InputField label="Nombre Público" name="nombre" value={formData.nombre} onChange={handleChange} />
+              <InputField label="Cargo / Profesión" name="rol" value={formData.rol} onChange={handleChange} />
             </div>
-            <div className="flex-1">
-              <input 
-                type="file" 
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={isUploading}
-                className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 disabled:opacity-50"
+
+            <div>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 block">Biografía / Presentación</label>
+              <textarea 
+                name="bio" 
+                value={formData.bio} 
+                onChange={handleChange}
+                rows={4}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none text-slate-700 text-sm"
+                placeholder="Escribe una breve descripción..."
               />
-              {isUploading && <p className="text-xs text-indigo-500 mt-1">Subiendo imagen...</p>}
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 block">Foto de Perfil</label>
+              <div className="flex items-center gap-6 p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                <div className="relative group">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    {formData.foto_url ? (
+                      <img src={formData.foto_url} alt="Preview" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-slate-100 text-slate-400 text-2xl">👤</div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer disabled:opacity-50"
+                  />
+                  <p className="text-[10px] text-slate-400 italic">Recomendado: Imagen cuadrada, máximo 2MB.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+            <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span className="w-8 h-8 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center text-sm">2</span>
+              Diseño y Colores
+            </h4>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block">Color Primario</label>
+                <div className="flex gap-3 items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <input type="color" name="theme_primary" value={formData.theme_primary} onChange={handleChange} className="h-10 w-12 rounded-lg cursor-pointer bg-transparent" />
+                  <code className="text-xs font-mono text-slate-500">{formData.theme_primary}</code>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest block">Color de Acento</label>
+                <div className="flex gap-3 items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+                  <input type="color" name="theme_accent" value={formData.theme_accent} onChange={handleChange} className="h-10 w-12 rounded-lg cursor-pointer bg-transparent" />
+                  <code className="text-xs font-mono text-slate-500">{formData.theme_accent}</code>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+            <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span className="w-8 h-8 bg-green-50 text-green-600 rounded-lg flex items-center justify-center text-sm">3</span>
+              Redes Sociales e Integraciones
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+              <InputField label="WhatsApp (Link)" name="whatsapp" placeholder="https://wa.me/..." value={formData.whatsapp} onChange={handleChange} />
+              <InputField label="Instagram" name="instagram" placeholder="https://instagram.com/..." value={formData.instagram} onChange={handleChange} />
+              <InputField label="LinkedIn" name="linkedin" placeholder="https://linkedin.com/..." value={formData.linkedin} onChange={handleChange} />
+              <InputField label="TikTok" name="tiktok" placeholder="https://tiktok.com/@..." value={formData.tiktok} onChange={handleChange} />
+            </div>
+            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <input id="usa_colores" name="usa_colores_tema" type="checkbox" checked={formData.usa_colores_tema} onChange={handleChange} className="w-5 h-5 rounded-md text-blue-600 border-slate-300 focus:ring-blue-500 transition-all" />
+              <label htmlFor="usa_colores" className="text-sm font-semibold text-slate-700 cursor-pointer">Usar los colores del tema en los iconos de redes sociales</label>
+            </div>
+          </section>
+
+        </div>
+
+        {/* Columna Derecha: Acciones y Resumen */}
+        <div className="space-y-6">
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl space-y-4">
+              <h4 className="text-sm font-bold uppercase tracking-widest text-slate-400">Acciones</h4>
+              <button 
+                type="submit" 
+                disabled={isSaving}
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-bold transition-all shadow-lg shadow-blue-900/20 active:scale-95 disabled:opacity-50"
+              >
+                {isSaving ? 'Guardando...' : 'Guardar Cambios'}
+              </button>
+              <a 
+                href={`/${profile.slug}`} 
+                target="_blank" 
+                className="w-full bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-2xl font-bold block text-center transition-all border border-slate-700"
+              >
+                Ver Perfil Público ↗
+              </a>
+            </div>
+
+            {message && (
+              <div className={`p-4 rounded-2xl text-sm font-bold animate-in fade-in slide-in-from-top-2 ${message.startsWith('✅') ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                {message}
+              </div>
+            )}
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Información de Sistema</h4>
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between"><span className="text-slate-400">Slug:</span> <span className="font-mono font-bold">{profile.slug}</span></div>
+                <div className="flex justify-between"><span className="text-slate-400">ID:</span> <span className="font-mono text-[10px]">{profile.id}</span></div>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Color Principal</label>
-            <input type="color" name="theme_primary" value={formData.theme_primary} onChange={handleChange} className="h-8 w-full rounded cursor-pointer" />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Color Acento</label>
-            <input type="color" name="theme_accent" value={formData.theme_accent} onChange={handleChange} className="h-8 w-full rounded cursor-pointer" />
-          </div>
-        </div>
       </div>
-
-      {/* SECCIÓN 2: Datos vCard */}
-      <div className="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-        <h4 className="font-bold text-slate-800 border-b pb-2">2. Datos de Contacto (vCard)</h4>
-        <p className="text-xs text-slate-500 mb-4">Estos datos se guardan al presionar el botón "Guardar Contacto".</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <InputField label="Nombre Legal" name="vcard_nombre_legal" value={formData.vcard_nombre_legal} onChange={handleChange} />
-          <InputField label="Organización / Empresa" name="vcard_company" value={formData.vcard_company} onChange={handleChange} />
-          <InputField label="Teléfono / Celular" name="vcard_telefono" value={formData.vcard_telefono} onChange={handleChange} />
-          <InputField label="Correo Electrónico" name="vcard_email" type="email" value={formData.vcard_email} onChange={handleChange} />
-          <InputField label="Sitio Web Principal" name="vcard_website" type="text" value={formData.vcard_website} onChange={handleChange} />
-        </div>
-      </div>
-
-      {/* SECCIÓN 3: Redes Fijas */}
-      <div className="space-y-4">
-        <h4 className="font-bold text-slate-800 border-b pb-2">3. Redes Sociales Fijas</h4>
-        <p className="text-xs text-slate-500 mb-4">Aparecerán como íconos al final de tu tarjeta. Déjalas en blanco para ocultar.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <InputField label="Instagram URL" name="instagram" type="text" placeholder="https://instagram.com/..." value={formData.instagram} onChange={handleChange} />
-          <InputField label="LinkedIn URL" name="linkedin" type="text" placeholder="https://linkedin.com/in/..." value={formData.linkedin} onChange={handleChange} />
-          <InputField label="WhatsApp URL (API)" name="whatsapp" type="text" placeholder="https://wa.me/..." value={formData.whatsapp} onChange={handleChange} />
-          <InputField label="Facebook URL" name="facebook" type="text" placeholder="https://facebook.com/..." value={formData.facebook} onChange={handleChange} />
-          <InputField label="TikTok URL" name="tiktok" type="text" placeholder="https://tiktok.com/@..." value={formData.tiktok} onChange={handleChange} />
-          <InputField label="YouTube URL" name="youtube" type="text" placeholder="https://youtube.com/..." value={formData.youtube} onChange={handleChange} />
-        </div>
-        
-        {/* Toggle Colores Originales */}
-        <div className="mt-4 flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200">
-          <input
-            id="usa_colores_tema"
-            name="usa_colores_tema"
-            type="checkbox"
-            checked={formData.usa_colores_tema}
-            onChange={handleChange}
-            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
-          />
-          <label htmlFor="usa_colores_tema" className="ml-2 block text-sm text-slate-700 cursor-pointer font-medium">
-            Usar mis colores personalizados del tema en los íconos sociales
-          </label>
-        </div>
-      </div>
-
-      {message && (
-        <div className={`p-3 rounded-md text-sm font-medium ${message.startsWith('✅') ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>
-          {message}
-        </div>
-      )}
-
-      <button 
-        type="submit" 
-        disabled={isSaving}
-        className="w-full bg-slate-900 hover:bg-slate-800 text-white py-3 px-4 rounded-xl font-bold shadow-lg transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-50"
-      >
-        {isSaving ? 'Guardando...' : 'Guardar Cambios del Perfil'}
-      </button>
     </form>
   )
 }

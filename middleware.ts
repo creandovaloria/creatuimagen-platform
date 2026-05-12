@@ -5,24 +5,10 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl
   const hostname = request.headers.get('host')?.toLowerCase() || ''
 
-  // Dominios principales de la plataforma
-  const MAIN_DOMAINS = [
-    'localhost:3000', 
-    'localhost', 
-    'creatuimagen.online', 
-    'www.creatuimagen.online',
-    'creatuimagen-platform-6unq.vercel.app'
-  ]
+  // 1. Siempre ejecutar la sesión de Supabase primero para manejar auth
+  const res = await updateSession(request)
 
-  // Mapeo robusto: Cualquier variación de lilianachaglla.com apunta al slug 'lilianachaglla'
-  const customDomainMap: Record<string, string> = {
-    'lilianachaglla.com': 'lilianachaglla',
-    'www.lilianachaglla.com': 'lilianachaglla',
-  }
-
-  const isMainDomain = MAIN_DOMAINS.some(domain => hostname === domain)
-
-  // Rutas internas que nunca deben ser reescritas
+  // 2. Definir rutas que NUNCA deben ser reescritas (Admin, API, etc.)
   const isInternal = 
     url.pathname.startsWith('/_next') || 
     url.pathname.startsWith('/api') || 
@@ -31,8 +17,26 @@ export async function middleware(request: NextRequest) {
     url.pathname.startsWith('/login') ||
     url.pathname.includes('.')
 
-  if (!isMainDomain && !isInternal) {
-    // Buscar si el hostname (limpio) está en nuestro mapa
+  if (isInternal) return res
+
+  // 3. Dominios principales
+  const MAIN_DOMAINS = [
+    'localhost:3000', 
+    'localhost', 
+    'creatuimagen.online', 
+    'www.creatuimagen.online',
+    'creatuimagen-platform-6unq.vercel.app'
+  ]
+
+  const isMainDomain = MAIN_DOMAINS.some(domain => hostname === domain)
+
+  // 4. Lógica de Dominios Personalizados
+  if (!isMainDomain) {
+    const customDomainMap: Record<string, string> = {
+      'lilianachaglla.com': 'lilianachaglla',
+      'www.lilianachaglla.com': 'lilianachaglla',
+    }
+
     const slug = customDomainMap[hostname] || customDomainMap[hostname.replace('www.', '')]
 
     if (slug) {
@@ -41,7 +45,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return await updateSession(request)
+  return res
 }
 
 export const config = {
