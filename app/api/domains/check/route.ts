@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   // Credenciales de Sandbox (solo para desarrollo/pruebas)
   const API_USER = 'creandovaloria'
   const API_KEY = '55a955be472441beb0f13d47db3364fd'
-  const CLIENT_IP = '189.180.123.18'
+  const CLIENT_IP = '3.87.42.13'
   const BASE_URL = 'https://api.sandbox.namecheap.com/xml.response'
 
   const params = new URLSearchParams({
