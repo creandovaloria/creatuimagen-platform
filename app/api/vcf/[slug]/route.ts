@@ -15,24 +15,33 @@ export async function GET(
   // Generar vCard string
   const vcfData = profile.vcf
   
-  // Nombre a mostrar (usa nombre legal si existe, sino el nombre público)
-  const fn = vcfData?.nombre_legal || profile.nombre
-  const n = fn.split(' ').reverse().join(';') // Simple aproximación para Last;First
+  // Procesar nombre para formato N (Last;First;Middle;Prefix;Suffix)
+  const nameParts = (vcfData?.nombre_legal || profile.nombre).trim().split(' ')
+  let n = ''
+  if (nameParts.length >= 2) {
+    const last = nameParts.pop()
+    const first = nameParts.join(' ')
+    n = `${last};${first};;;`
+  } else {
+    n = `${nameParts[0]};;;;`
+  }
   
+  const fn = vcfData?.nombre_legal || profile.nombre
+
   const vcard = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    `N:${n};;;`,
+    `N:${n}`,
     `FN:${fn}`,
     `TITLE:${profile.rol}`,
     vcfData?.company ? `ORG:${vcfData.company}` : '',
-    vcfData?.telefono ? `TEL;type=CELL;type=VOICE;type=pref:${vcfData.telefono}` : '',
-    vcfData?.email ? `EMAIL;type=INTERNET;type=pref:${vcfData.email}` : '',
-    vcfData?.website ? `URL;type=pref:${vcfData.website}` : '',
+    vcfData?.telefono ? `TEL;TYPE=CELL,VOICE;VALUE=uri:tel:${vcfData.telefono.replace(/\s/g, '')}` : '',
+    vcfData?.email ? `EMAIL;TYPE=INTERNET,HOME:${vcfData.email}` : '',
+    vcfData?.website ? `URL;TYPE=WORK:${vcfData.website}` : '',
     profile.bio ? `NOTE:${profile.bio.replace(/\n/g, '\\n')}` : '',
-    profile.foto_url ? `PHOTO;VALUE=uri:${profile.foto_url}` : '',
+    profile.foto_url ? `PHOTO;VALUE=URI:${profile.foto_url}` : '',
     'END:VCARD'
-  ].filter(Boolean).join('\n')
+  ].filter(line => line && line.split(':')[1]).join('\r\n')
 
   return new NextResponse(vcard, {
     headers: {

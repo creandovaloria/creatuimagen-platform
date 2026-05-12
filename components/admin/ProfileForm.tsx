@@ -36,8 +36,9 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
     tiktok: profile.tiktok || '',
     facebook: profile.facebook || '',
     youtube: profile.youtube || '',
-    whatsapp: profile.whatsapp || '',
+     whatsapp: profile.whatsapp || '',
     usa_colores_tema: profile.usa_colores_tema || false,
+    custom_domain: profile.custom_domain || '',
     // VCard
     vcard_nombre_legal: profile.vcf?.nombre_legal || '',
     vcard_telefono: profile.vcf?.telefono || '',
@@ -107,8 +108,9 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
         tiktok: formData.tiktok,
         facebook: formData.facebook,
         youtube: formData.youtube,
-        whatsapp: formData.whatsapp,
+         whatsapp: formData.whatsapp,
         usa_colores_tema: formData.usa_colores_tema,
+        custom_domain: formData.custom_domain,
       },
       {
         nombre_legal: formData.vcard_nombre_legal,
@@ -140,6 +142,18 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <InputField label="Nombre Público" name="nombre" value={formData.nombre} onChange={handleChange} />
               <InputField label="Cargo / Profesión" name="rol" value={formData.rol} onChange={handleChange} />
+              <div className="sm:col-span-2">
+                <InputField 
+                  label="Dominio Personalizado (Opcional)" 
+                  name="custom_domain" 
+                  placeholder="ej: lilianachaglla.com" 
+                  value={formData.custom_domain} 
+                  onChange={handleChange} 
+                />
+                <p className="text-[10px] text-slate-400 mt-1 italic">
+                  Configura esto solo si el cliente tiene un dominio propio apuntando a Vercel.
+                </p>
+              </div>
             </div>
 
             <div>
