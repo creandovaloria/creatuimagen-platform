@@ -15,7 +15,6 @@ export default function DomainSearch() {
     setResult(null)
 
     try {
-      // Llamada directa a Namecheap Sandbox desde el navegador del usuario (que tiene la IP autorizada)
       const API_USER = 'creandovaloria'
       const API_KEY = '55a955be472441beb0f13d47db3364fd'
       const CLIENT_IP = '189.180.123.18'
@@ -25,6 +24,13 @@ export default function DomainSearch() {
       const response = await fetch(url)
       const xmlText = await response.text()
       
+      console.log('Namecheap Raw Response:', xmlText) // Esto lo verás en la consola (F12)
+
+      if (xmlText.includes('Error')) {
+        const errorMsg = xmlText.match(/<Error.*?>(.*?)<\/Error>/)?.[1] || 'Error de IP o API Key'
+        alert(`Error de Namecheap: ${errorMsg}`)
+      }
+
       const isAvailable = xmlText.includes('IsAvailable="true"')
       
       setResult({
