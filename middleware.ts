@@ -17,27 +17,27 @@ export async function middleware(request: NextRequest) {
     return await updateSession(request)
   }
 
-  // 2. Si estamos en el dominio principal, no hacemos nada especial
-  if (
-    hostname.includes('creatuimagen.online') || 
-    hostname.includes('vercel.app') || 
-    hostname.includes('localhost')
-  ) {
-    return await updateSession(request)
-  }
+  // 2. Lógica de Subdominios (bios.creatuimagen.online, eventos.creatuimagen.online)
+  const isBiosSubdomain = hostname.startsWith('bios.')
+  const isEventosSubdomain = hostname.startsWith('eventos.')
 
-  // 3. Lógica para DOMINIOS PERSONALIZADOS (Ej: lilianachaglla.com)
+  // 3. Mapeo de Dominios Personalizados a Slugs
   const customDomainMap: Record<string, string> = {
-    'lilianachaglla.com': 'lilianachaglla',
-    'www.lilianachaglla.com': 'lilianachaglla',
+    'lilianachaglla.com': 'liliana-chaglla',
+    'www.lilianachaglla.com': 'liliana-chaglla',
   }
 
-  const slug = customDomainMap[hostname] || customDomainMap[hostname.replace('www.', '')]
+  const customSlug = customDomainMap[hostname] || customDomainMap[hostname.replace('www.', '')]
 
-  if (slug) {
-    // Redirigir internamente lilianachaglla.com/ -> /lilianachaglla
-    const rewriteUrl = new URL(`/${slug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
+  if (customSlug) {
+    const rewriteUrl = new URL(`/${customSlug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
     return NextResponse.rewrite(rewriteUrl)
+  }
+
+  // 4. Si es el subdominio de bios, pero no es dominio personalizado
+  if (isBiosSubdomain && url.pathname === '/') {
+    // Aquí podrías redirigir a una landing de "bios" si quisieras
+    return await updateSession(request)
   }
 
   return await updateSession(request)
