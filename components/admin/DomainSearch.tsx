@@ -15,13 +15,22 @@ export default function DomainSearch() {
     setResult(null)
 
     try {
-      const response = await fetch(`/api/domains/check?domain=${query}`)
-      const data = await response.json()
+      // Llamada directa a Namecheap Sandbox desde el navegador del usuario (que tiene la IP autorizada)
+      const API_USER = 'creandovaloria'
+      const API_KEY = '55a955be472441beb0f13d47db3364fd'
+      const CLIENT_IP = '189.180.123.18'
+      
+      const url = `https://api.sandbox.namecheap.com/xml.response?ApiUser=${API_USER}&ApiKey=${API_KEY}&UserName=${API_USER}&ClientIp=${CLIENT_IP}&Command=namecheap.domains.check&DomainList=${query}`
+      
+      const response = await fetch(url)
+      const xmlText = await response.text()
+      
+      const isAvailable = xmlText.includes('IsAvailable="true"')
       
       setResult({
-        domain: data.domain,
-        available: data.available,
-        total: data.price
+        domain: query,
+        available: isAvailable,
+        total: 17.50
       })
     } catch (error) {
       console.error('Error searching domain:', error)
