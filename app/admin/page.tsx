@@ -1,6 +1,5 @@
 import { getAllPerfiles } from '@/lib/supabase'
 import Link from 'next/link'
-import DomainSearch from '@/components/admin/DomainSearch'
 
 export default async function AdminDashboard() {
   const { data: perfiles, error } = await getAllPerfiles()
@@ -73,8 +72,6 @@ export default async function AdminDashboard() {
           </table>
         </div>
       </section>
-
-      <DomainSearch />
     </div>
   )
 }
