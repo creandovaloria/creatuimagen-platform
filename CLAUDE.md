@@ -20,7 +20,7 @@ Lee este archivo al inicio de cada sesión para entender el proyecto completo.
 | Subdominio | Producto | Estado |
 |-----------|---------|--------|
 | invita.creatuimagen.online | Invitaciones digitales | 🔄 En desarrollo |
-| perfil.creatuimagen.online | Perfiles digitales | 🔄 En desarrollo |
+| bio.creatuimagen.online | Perfiles digitales | 🔄 En desarrollo |
 | dashboard.creatuimagen.online | Panel admin | 🔜 Próximo |
 
 ---
@@ -48,7 +48,7 @@ Lee este archivo al inicio de cada sesión para entender el proyecto completo.
 - Secciones: intro → música → calendario+countdown → collage → lugar → tira fotográfica → mensaje+flamingo+rsvp
 
 ### Perfil Digital — Andy Villarruel
-- URL destino: perfil.creatuimagen.online/andy-villarruel
+- URL destino: bio.creatuimagen.online/andy-villarruel
 - Funcionalidades: foto perfil, links, botón guardar contacto (.vcf)
 - Estado: pendiente datos de Andy
 

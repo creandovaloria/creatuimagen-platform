@@ -22,12 +22,14 @@
 | **Pro** | $999 | 6 meses | + Dashboard RSVP, notificación WhatsApp automática, analytics básico |
 | **Premium** | $1,999 | 12 meses | + Video, dominio propio, analytics completo, recordatorios automáticos |
 
-### Perfiles Digitales
+### Perfiles Digitales (Linktrees)
 
 | Plan | Precio MXN | Duración | Incluye |
 |------|-----------|----------|---------|
-| **Básico** | $299 | 6 meses | Perfil, links, botón guardar contacto VCF |
-| **Pro** | $699 | 12 meses | + PWA instalable, analytics de clicks, múltiples secciones |
+| **Identidad Esencial** | $1,048 | Anual | Perfil linktree, links, botón guardar contacto (VCF), edición autogestionada |
+| **Conexión Pro** | $1,548 | Anual | + Tarjeta física NFC inteligente para networking |
+| **Autoridad Premium** | $2,048 | Anual | + Fotografía Profesional con IA, Correo Corporativo, Integración Calendly |
+| **Negocio Automático** | $3,999 | Anual | + Landing de Venta Automatizada, Pasarela de Pago, Correos Automáticos, Formularios de Registro |
 
 ### Paquetes para Event Planners
 

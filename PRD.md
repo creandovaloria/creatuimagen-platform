@@ -69,7 +69,7 @@ Plataforma SaaS de presencia digital para eventos y personas, que permite crear 
 ---
 
 ### 4.2 Perfiles Digitales
-**URL:** perfil.creatuimagen.online/[slug]
+**URL:** bio.creatuimagen.online/[slug]
 
 #### Funcionalidades core (MVP)
 - [ ] Foto de perfil desde Cloudinary
@@ -140,7 +140,7 @@ Plataforma SaaS de presencia digital para eventos y personas, que permite crear 
 
 ### Caso 2 — Andy Villarruel (FOCO ACTUAL)
 - **Producto:** Perfil digital
-- **URL:** perfil.creatuimagen.online/andy-villarruel
+- **URL:** bio.creatuimagen.online/andy-villarruel
 - **Funcionalidades:** foto, links, botón guardar contacto VCF
 - **Prioridad:** 🔴 Alta — primer perfil del producto
 
@@ -149,7 +149,7 @@ Plataforma SaaS de presencia digital para eventos y personas, que permite crear 
 ## 7. Stack y arquitectura
 
 ```
-invita.creatuimagen.online          perfil.creatuimagen.online
+invita.creatuimagen.online          bio.creatuimagen.online
         │                                      │
         └──────────────────────────────────────┘
                            │

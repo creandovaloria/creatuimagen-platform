@@ -18,7 +18,7 @@ creatuimagen.online
 │     ├── /Boda-Ana-Carlos           ← próximos eventos
 │     └── /Cumple-Luis
 │
-├── perfil.creatuimagen.online       ← Perfiles digitales tipo linktree
+├── bio.creatuimagen.online       ← Perfiles digitales tipo linktree
 │     ├── /andy-villarruel           ← caso 1
 │     ├── /liz-barron
 │     └── /arturo-barrios
@@ -68,7 +68,7 @@ Landing pages mobile-first para eventos: XV años, bodas, bautizos, cumpleaños.
 - Botón WhatsApp con mensaje preescrito
 - Footer branding arturobarrios.com
 
-### 2. Perfiles Digitales (`perfil.creatuimagen.online`)
+### 2. Perfiles Digitales (`bio.creatuimagen.online`)
 Páginas personales tipo linktree con identidad visual propia.
 
 **Funcionalidades:**
@@ -100,7 +100,7 @@ creatuimagen/
 │   ├── (invita)/
 │   │   └── [slug]/
 │   │       └── page.tsx          ← invitación dinámica por slug
-│   ├── (perfil)/
+│   ├── (bio)/
 │   │   └── [slug]/
 │   │       └── page.tsx          ← perfil digital por slug
 │   ├── dashboard/
@@ -142,7 +142,7 @@ creatuimagen/
 | Producto | Cliente | URL | Estado |
 |----------|---------|-----|--------|
 | Invitación XV | Regina | invita.creatuimagen.online/XV-Regina | 🔄 En desarrollo |
-| Perfil digital | Andy Villarruel | perfil.creatuimagen.online/andy-villarruel | 🔄 En desarrollo |
+| Perfil digital | Andy Villarruel | bio.creatuimagen.online/andy-villarruel | 🔄 En desarrollo |
 
 ---
 
