@@ -63,9 +63,10 @@ Credenciales NUNCA en el HTML. El HTML solo conoce la URL de la API.
 **URL:** `https://soundcloud.com/wearebigbeat/icona-pop-i-love-it-feat-charli-xcx`
 **Implementación:** iframe oculto + `SC.Widget(iframe)` + bind READY/PLAY/PAUSE/FINISH.
 
-### Error 9 — Module not found en Vercel pero no en local
-**Causa:** Archivo creado localmente pero no incluido en push a GitHub.
-**Prevención:** Subir archivos nuevos al repo inmediatamente al crearlos.
+### Error 9 — **Multi-tenancy:** Soporte para dominios personalizados (SaaS) y subdominios específicos (`bios.`, `eventos.`).
+- **Middleware Robusto:** Ruteo dinámico basado en el hostname para servir el perfil correcto sin cambiar la URL del usuario.
+- **Admin Panel Pro:** Interfaz mejorada para gestión de colores, fotos y enlaces dinámicos con soporte de protocolos automáticos.
+- **Seguridad:** Autenticación centralizada mediante Supabase Auth con roles de administrador protegidos.
 
 ### Error 10 — Primer click no reproduce en iOS/iPadOS
 **Causa:** Safari requiere user gesture directo. postMessage no cuenta.
@@ -181,6 +182,21 @@ Todo lo demás (planner, festejado, fecha, lugar) viene de Supabase. Sin hardcod
 ---
 
 ## 🐛 Troubleshooting — Vercel deployments
+
+### 📧 Gestión de Reputación de Email y Auth
+- **Lección:** No usar correos ficticios (`@creatuimagen.online`) en Supabase Auth.
+- **Impacto:** Supabase detecta los rebotes y puede suspender los privilegios de envío de correos del proyecto.
+- **Solución:** Usar siempre correos reales para administradores y configurar un proveedor SMTP externo (como Resend) lo antes posible para producción.
+
+### 🌐 Arquitectura Multi-tenant en Vercel
+- **Lección:** Un proyecto en Vercel puede manejar múltiples dominios, pero cada uno debe ser añadido manualmente o vía API a la lista de dominios del proyecto.
+- **Impacto:** Si un dominio apunta al DNS de Vercel pero no está en la lista del proyecto, devolverá un error 404 genérico de Vercel.
+- **Solución:** Centralizar todos los dominios en la "Nave Nodriza" (proyecto principal) y dejar que el Middleware haga el ruteo interno.
+
+### 🔗 Protocolos en Enlaces Dinámicos
+- **Lección:** Los navegadores interpretan links sin `https://` como rutas internas.
+- **Impacto:** Al hacer clic en un botón de red social, el usuario era enviado a `bios.creatuimagen.online/linkedin.com/...` causando un 404.
+- **Solución:** Implementar una función sanitizadora (`ensureExternalLink`) que fuerce el protocolo en todos los enlaces externos.
 
 ### Error 10 — Múltiples deployments en error por Supabase
 **Causa:** La API route `/api/rsvp` intentaba conectar a Supabase en build time, pero las env vars no estaban configuradas en Vercel.  
