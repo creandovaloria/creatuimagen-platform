@@ -113,6 +113,7 @@ export interface PerfilData {
   youtube: string | null
   whatsapp: string | null
   usa_colores_tema: boolean
+  custom_domain: string | null
 }
 
 export interface PerfilLinkData {
@@ -170,6 +171,18 @@ export async function getPerfilCompleto(slug: string) {
     },
     error: null
   }
+}
+
+export async function getPerfilByDomain(domain: string) {
+  const sb = getSupabase()
+  const { data, error } = await sb
+    .from('perfiles')
+    .select('slug')
+    .eq('custom_domain', domain)
+    .eq('activo', true)
+    .maybeSingle()
+  
+  return { data, error }
 }
 
 // -- Funciones para Administración de Perfiles --

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
+import { createClient } from '@supabase/supabase-js'
 
 export async function middleware(request: NextRequest) {
   const url = request.nextUrl
@@ -17,27 +18,30 @@ export async function middleware(request: NextRequest) {
     return await updateSession(request)
   }
 
-  // 2. Lógica de Subdominios (bios.creatuimagen.online, eventos.creatuimagen.online)
-  const isBiosSubdomain = hostname.startsWith('bios.')
-  const isEventosSubdomain = hostname.startsWith('eventos.')
+  // 2. Lógica para DOMINIOS PERSONALIZADOS (Dinámica desde DB)
+  // No procesamos subdominios internos de creatuimagen.online para el ruteo dinámico
+  const isMainDomain = hostname.includes('creatuimagen.online') || hostname.includes('vercel.app') || hostname.includes('localhost')
 
-  // 3. Mapeo de Dominios Personalizados a Slugs
-  const customDomainMap: Record<string, string> = {
-    'lilianachaglla.com': 'liliana-chaglla',
-    'www.lilianachaglla.com': 'liliana-chaglla',
-  }
+  if (!isMainDomain) {
+    // Usamos una instancia ligera de supabase para el middleware
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
 
-  const customSlug = customDomainMap[hostname] || customDomainMap[hostname.replace('www.', '')]
+    // Buscamos si el dominio (o su versión sin www) está en la DB
+    const cleanHostname = hostname.replace('www.', '')
+    const { data: perfil } = await supabase
+      .from('perfiles')
+      .select('slug')
+      .eq('custom_domain', cleanHostname)
+      .eq('activo', true)
+      .maybeSingle()
 
-  if (customSlug) {
-    const rewriteUrl = new URL(`/${customSlug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
-    return NextResponse.rewrite(rewriteUrl)
-  }
-
-  // 4. Si es el subdominio de bios, pero no es dominio personalizado
-  if (isBiosSubdomain && url.pathname === '/') {
-    // Aquí podrías redirigir a una landing de "bios" si quisieras
-    return await updateSession(request)
+    if (perfil?.slug) {
+      const rewriteUrl = new URL(`/${perfil.slug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
+      return NextResponse.rewrite(rewriteUrl)
+    }
   }
 
   return await updateSession(request)
