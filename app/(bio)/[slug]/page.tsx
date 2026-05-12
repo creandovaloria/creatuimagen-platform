@@ -39,7 +39,11 @@ export default async function BioPage({ params }: { params: Promise<{ slug: stri
   return (
     <main 
       className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8"
-      style={{ backgroundColor: `${profileData.theme_accent}` }}
+      style={{ 
+        background: `radial-gradient(at 0% 0%, ${profileData.theme_primary}15 0, transparent 50%), 
+                     radial-gradient(at 100% 100%, ${profileData.theme_primary}10 0, transparent 50%),
+                     #f8fafc` 
+      }}
     >
       <ProfileCard profile={profileData} />
     </main>
