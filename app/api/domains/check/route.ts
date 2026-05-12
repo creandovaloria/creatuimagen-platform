@@ -27,18 +27,20 @@ export async function GET(request: Request) {
     const response = await fetch(`${BASE_URL}?${params.toString()}`)
     const xmlText = await response.text()
     
-    // Parseo simple del XML de Namecheap
+    console.log('--- Namecheap RAW Response ---')
+    console.log(xmlText)
+    console.log('------------------------------')
+
+    // Parseo del XML de Namecheap
     const isAvailable = xmlText.includes('IsAvailable="true"')
-    
-    // Precios estimados para Sandbox
-    const basePrice = 12.50
-    const margin = 5.00
+    const hasError = xmlText.includes('<Error')
+    const errorMsg = hasError ? xmlText.match(/<Error.*?>(.*?)<\/Error>/)?.[1] : null
 
     return NextResponse.json({
       domain,
       available: isAvailable,
-      price: basePrice + margin,
-      currency: 'USD'
+      price: 17.50,
+      error: errorMsg
     })
   } catch (error) {
     console.error('Namecheap API Error:', error)
