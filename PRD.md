@@ -6,6 +6,8 @@
 **Autor:** Arturo Barrios  
 **Última actualización:** MVP de Perfiles Digitales completado
 
+> 💡 **Idea pendiente de validar:** Tier de entrada "Starter" a $256 MXN — tarjeta básica como bait dentro del dominio arturobarrios.com (sin subdominio propio). Explorar en siguiente sprint de monetización.
+
 ---
 
 ## 1. Visión del producto
