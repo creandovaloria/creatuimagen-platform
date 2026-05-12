@@ -5,40 +5,38 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl
   const hostname = request.headers.get('host')?.toLowerCase() || ''
 
-  // Dominios principales de la plataforma (ajustar según sea necesario)
+  // Dominios principales de la plataforma
   const MAIN_DOMAINS = [
     'localhost:3000', 
     'localhost', 
     'creatuimagen.online', 
     'www.creatuimagen.online',
-    'creatuimagen-platform-6unq.vercel.app' // Tu URL actual de Vercel
+    'creatuimagen-platform-6unq.vercel.app'
   ]
 
-  // Mapeo de dominios personalizados a slugs
+  // Mapeo robusto: Cualquier variación de lilianachaglla.com apunta al slug 'lilianachaglla'
   const customDomainMap: Record<string, string> = {
     'lilianachaglla.com': 'lilianachaglla',
     'www.lilianachaglla.com': 'lilianachaglla',
   }
 
-  // Verificar si es un dominio personalizado
-  const isCustomDomain = !MAIN_DOMAINS.some(domain => hostname === domain || hostname.endsWith('.' + domain))
+  const isMainDomain = MAIN_DOMAINS.some(domain => hostname === domain)
 
-  // Rutas que NO deben ser reescritas
+  // Rutas internas que nunca deben ser reescritas
   const isInternal = 
     url.pathname.startsWith('/_next') || 
     url.pathname.startsWith('/api') || 
     url.pathname.startsWith('/admin') ||
     url.pathname.startsWith('/auth') ||
     url.pathname.startsWith('/login') ||
-    url.pathname.includes('.') // Archivos estáticos como favicon.ico, etc.
+    url.pathname.includes('.')
 
-  if (isCustomDomain && !isInternal) {
-    const slug = customDomainMap[hostname]
+  if (!isMainDomain && !isInternal) {
+    // Buscar si el hostname (limpio) está en nuestro mapa
+    const slug = customDomainMap[hostname] || customDomainMap[hostname.replace('www.', '')]
 
     if (slug) {
-      // Reescribir internamente a la página del bio: /lilianachaglla
       const rewriteUrl = new URL(`/${slug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
-      console.log(`Rewriting ${hostname}${url.pathname} to ${rewriteUrl.pathname}`)
       return NextResponse.rewrite(rewriteUrl)
     }
   }
