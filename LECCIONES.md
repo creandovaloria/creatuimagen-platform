@@ -411,9 +411,18 @@ export const dynamic = 'force-dynamic';
 3. **SSR & Dynamic:** Usar `@supabase/ssr` y `export const dynamic = 'force-dynamic'` en las rutas de administración.
 
 ### Error 21 — RLS bloquea el Ruteo en el Middleware
-**Problema:** Al activar RLS y cambiar la clave pública a `anon`, el Middleware dejó de encontrar los dominios personalizados en la base de datos, redirigiendo a todos los usuarios a la Landing Page.  
-**Causa:** El Middleware realiza consultas como un "visitante anónimo". Bajo RLS, un visitante anónimo no tiene permisos para ver la tabla `perfiles`, por lo que la consulta siempre devolvía vacío.  
-**Solución:** Cambiar el cliente de Supabase dentro de `middleware.ts` para que use la `SUPABASE_SERVICE_ROLE_KEY`. Esto permite que el sistema de ruteo tenga permisos de superusuario para encontrar el `slug` correspondiente, mientras que el resto de la aplicación sigue protegida por RLS para el usuario final.
+**Problema:** Al activar RLS y cambiar la clave pública a `anon`, el Middleware dejó de encontrar los dominios personalizados en la base de datos.  
+**Causa:** El Middleware realiza consultas como un "visitante anónimo". Bajo RLS, un visitante anónimo no tiene permisos para ver la tabla `perfiles`, por lo que la consulta devolvía vacío.  
+**Solución:** Usar la `SUPABASE_SERVICE_ROLE_KEY` dentro de `middleware.ts` para las consultas de infraestructura de ruteo.
+
+### Error 22 — Conflicto de Respuestas en Middleware (updateSession vs rewrite)
+**Problema:** El sitio de Lili mostraba la Landing Page o 404 a pesar de tener el ruteo configurado.  
+**Causa:** `updateSession` genera una nueva respuesta. Si se llama después de un `rewrite`, la sobreescribe.  
+**Solución:** Unificar la respuesta. Obtener primero la respuesta de la sesión y pasarla como base al comando `rewrite`: `return NextResponse.rewrite(url, { request: { headers: sessionResponse.headers } })`.
+
+### Buena Práctica de Diseño SaaS: Aislamiento Visual
+**Concepto:** Los clientes finales (inquilinos) nunca deben ver herramientas de infraestructura.  
+**Implementación:** Usar condicionales basados en el email o rol del usuario en el Layout para ocultar secciones de sistema (Vercel, Supabase, Logs). Esto mejora la percepción de marca y reduce la confusión del usuario.
 
 ---
 © 2026 Creando Valor IA
