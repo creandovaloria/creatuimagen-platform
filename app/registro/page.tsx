@@ -119,8 +119,24 @@ export default function RegistroPage() {
                   <option value="57">🇨🇴 +57</option>
                   <option value="56">🇨🇱 +56</option>
                   <option value="51">🇵🇪 +51</option>
+                  <option value="593">🇪🇨 +593</option>
+                  <option value="58">🇻🇪 +58</option>
                   <option value="502">🇬🇹 +502</option>
                   <option value="506">🇨🇷 +506</option>
+                  <option value="507">🇵🇦 +507</option>
+                  <option value="1">🇩🇴 +1</option>
+                  <option value="598">🇺🇾 +598</option>
+                  <option value="591">🇧🇴 +591</option>
+                  <option value="595">🇵🇾 +595</option>
+                  <option value="503">🇸🇻 +503</option>
+                  <option value="504">🇭🇳 +504</option>
+                  <option value="505">🇳🇮 +505</option>
+                  <option value="1-PR">🇵🇷 +1</option>
+                  <option value="55">🇧🇷 +55</option>
+                  <option value="39">🇮🇹 +39</option>
+                  <option value="33">🇫🇷 +33</option>
+                  <option value="49">🇩🇪 +49</option>
+                  <option value="44">🇬🇧 +44</option>
                 </select>
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
