@@ -19,33 +19,13 @@ export async function POST(request: Request) {
     if (type === 'payment') {
       try {
         const paymentId = data.id;
-        let paymentData;
-
-        // MODO PRUEBA: Si el ID es de prueba, inyectamos datos ficticios para validar el CRM
-        if (paymentId.toString().startsWith('TEST_PAYMENT')) {
-          const uniqueId = Math.floor(Math.random() * 1000);
-          paymentData = {
-            status: 'approved',
-            transaction_amount: 950,
-            metadata: {
-              email: 'rafart.barrios@gmail.com',
-              nombre: 'Arturo Barrios Test',
-              whatsapp: '5512345678',
-              slug: `test-crm-${uniqueId}`
-            }
-          };
-          console.log('🧪 MODO PRUEBA ACTIVADO:', paymentData.metadata.slug);
-        } else {
-          const payment = new Payment(client);
-          paymentData = await payment.get({ id: paymentId });
-        }
+        const payment = new Payment(client);
+        const paymentData = await payment.get({ id: paymentId });
 
         // Verificamos que el pago esté aprobado
         if (paymentData && paymentData.status === 'approved') {
           const { slug, email, nombre, whatsapp } = paymentData.metadata || {};
         
-          console.log('📦 Datos recibidos del pago:', { slug, email, nombre, whatsapp });
-
           if (!slug || !email) {
             console.error('❌ Error: El pago no contiene metadata (slug/email)');
             return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
@@ -111,11 +91,7 @@ export async function POST(request: Request) {
         }
       } catch (error: any) {
         console.error('⚠️ Webhook Processing Error:', error.message);
-        return NextResponse.json({ 
-          received: true, 
-          status: 'error',
-          message: error.message 
-        });
+        return NextResponse.json({ received: true });
       }
     }
 

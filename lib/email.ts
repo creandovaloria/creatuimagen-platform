@@ -35,7 +35,6 @@ interface WelcomeEmailProps {
 export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
-    console.log(`📧 Intentando enviar Welcome Email a: ${email} desde ${from}`);
     
     const data = await client.emails.send({
       from: from, 
