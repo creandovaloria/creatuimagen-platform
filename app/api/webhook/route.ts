@@ -17,12 +17,13 @@ export async function POST(request: Request) {
 
     // Solo nos interesan los pagos
     if (type === 'payment') {
-      const payment = new Payment(client);
-      const paymentData = await payment.get({ id: data.id });
+      try {
+        const payment = new Payment(client);
+        const paymentData = await payment.get({ id: data.id });
 
-      // Verificamos que el pago esté aprobado
-      if (paymentData.status === 'approved') {
-        const { slug, email, nombre, whatsapp } = paymentData.metadata || {};
+        // Verificamos que el pago esté aprobado
+        if (paymentData && paymentData.status === 'approved') {
+          const { slug, email, nombre, whatsapp } = paymentData.metadata || {};
         
         console.log('📦 Datos recibidos del pago:', { slug, email, nombre, whatsapp });
 
@@ -54,7 +55,12 @@ export async function POST(request: Request) {
 
         console.log(`✅ Perfil ${slug} activado con éxito.`);
       }
+    } catch (error) {
+      console.error('⚠️ Pago no encontrado o error en MP:', data.id);
+      // Respondemos 200 para que MP deje de reintentar notificaciones fallidas de prueba
+      return NextResponse.json({ received: true, status: 'not_found' });
     }
+  }
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
