@@ -28,6 +28,18 @@ export async function GET(
   
   const fn = vcfData?.nombre_legal || profile.nombre
 
+  // Procesar imagen a Base64 si existe
+  let photoBase64 = ''
+  if (profile.foto_url) {
+    try {
+      const response = await fetch(profile.foto_url)
+      const buffer = await response.arrayBuffer()
+      photoBase64 = Buffer.from(buffer).toString('base64')
+    } catch (e) {
+      console.error('Error procesando imagen para VCF:', e)
+    }
+  }
+
   const vcard = [
     'BEGIN:VCARD',
     'VERSION:3.0',
@@ -35,17 +47,21 @@ export async function GET(
     `FN:${fn}`,
     `TITLE:${profile.rol}`,
     vcfData?.company ? `ORG:${vcfData.company}` : '',
-    vcfData?.telefono ? `TEL;TYPE=CELL,VOICE;VALUE=uri:tel:${vcfData.telefono.replace(/\s/g, '')}` : '',
+    vcfData?.telefono ? `TEL;TYPE=CELL,VOICE:${vcfData.telefono.replace(/\s/g, '')}` : '',
     vcfData?.email ? `EMAIL;TYPE=INTERNET,HOME:${vcfData.email}` : '',
     vcfData?.website ? `URL;TYPE=WORK:${vcfData.website}` : '',
     profile.bio ? `NOTE:${profile.bio.replace(/\n/g, '\\n')}` : '',
-    profile.foto_url ? `PHOTO;VALUE=URI:${profile.foto_url}` : '',
+    photoBase64 ? `PHOTO;ENCODING=b;TYPE=JPEG:${photoBase64}` : '',
     'END:VCARD'
-  ].filter(line => line && line.split(':')[1]).join('\r\n')
+  ].filter(line => {
+    if (!line) return false
+    const colonIndex = line.indexOf(':')
+    return colonIndex !== -1 && line.substring(colonIndex + 1).trim() !== ''
+  }).join('\r\n')
 
   return new NextResponse(vcard, {
     headers: {
-      'Content-Type': 'text/vcard',
+      'Content-Type': 'text/vcard; charset=utf-8',
       'Content-Disposition': `attachment; filename="${profile.slug}.vcf"`,
     },
   })
