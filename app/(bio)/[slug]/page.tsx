@@ -3,6 +3,7 @@ import { getPerfilCompleto } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { headers } from 'next/headers'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params
@@ -37,9 +38,23 @@ export default async function BioPage({ params }: { params: Promise<{ slug: stri
     return notFound()
   }
 
-  // Incrementamos la visita de forma asíncrona
+  // Detectar Origen del Tráfico
+  const headersList = await headers()
+  const referer = headersList.get('referer') || 'Directo'
+  
+  let fuente = 'Directo'
+  if (referer.includes('instagram.com')) fuente = 'Instagram'
+  else if (referer.includes('facebook.com')) fuente = 'Facebook'
+  else if (referer.includes('t.co') || referer.includes('twitter.com')) fuente = 'Twitter'
+  else if (referer.includes('tiktok.com')) fuente = 'TikTok'
+  else if (referer.includes('google.com')) fuente = 'Google'
+
+  // Incrementamos la visita con fuente de forma asíncrona
   const supabase = await createClient()
-  supabase.rpc('increment_visitas', { target_slug: resolvedParams.slug }).then(({ error }) => {
+  supabase.rpc('registrar_visita_completa', { 
+    target_slug: resolvedParams.slug,
+    fuente_detectada: fuente 
+  }).then(({ error }) => {
     if (error) console.error('Error incrementando visitas:', error)
   })
 
