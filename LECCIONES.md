@@ -399,6 +399,17 @@ export const dynamic = 'force-dynamic';
 **Solución:** En el endpoint `/api/vcf/[slug]`, descargar la imagen de Supabase Storage, convertirla a Base64 e incrustarla directamente en el campo `PHOTO;ENCODING=b;TYPE=JPEG:[BASE64]`.  
 **Beneficio:** Experiencia premium donde el cliente guarda el contacto con foto incluida automáticamente.
 
+### Error 20 — Conflicto de Políticas RLS y Fuga de Service Role Key
+**Problema:** El aislamiento multi-tenant fallaba y los usuarios veían datos ajenos.  
+**Causa Raíz:** 
+1. Se estaba usando la `SERVICE_ROLE_KEY` en una variable `NEXT_PUBLIC_`, lo que anulaba el RLS en el cliente.
+2. Existían políticas `SELECT` antiguas que permitían acceso público, las cuales se sumaban a las nuevas restricciones.
+3. El uso de clientes estáticos en Server Components no enviaba las cookies de sesión.
+**Solución:**
+1. **Nuke SQL:** Borrar todas las políticas previas de la tabla con un script `DO $$` y crear una única política restrictiva basada en `auth.uid() = user_id` y `auth.jwt() ->> 'email'`.
+2. **Key Security:** Mover la `SERVICE_ROLE_KEY` a variables privadas y usar solo `anon` para el frontend.
+3. **SSR & Dynamic:** Usar `@supabase/ssr` y `export const dynamic = 'force-dynamic'` en las rutas de administración.
+
 ---
 © 2026 Creando Valor IA
 
