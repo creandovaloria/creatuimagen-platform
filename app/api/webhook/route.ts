@@ -39,9 +39,7 @@ export async function POST(request: Request) {
             nombre: nombre || email.split('@')[0],
             email,
             slug,
-            activo: true,
-            rol: 'Usuario Pro',
-            primary_color: '#2563eb'
+            activo: true
           });
 
         if (dbError) {
