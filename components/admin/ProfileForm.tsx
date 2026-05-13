@@ -236,6 +236,25 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
             </div>
           </section>
 
+          <section className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
+            <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <span className="w-8 h-8 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center text-sm">4</span>
+              Datos de Contacto (VCard)
+            </h4>
+            <p className="text-[11px] text-slate-400 -mt-2">
+              Estos son los datos que se descargarán cuando el usuario haga clic en el botón "Guardar Contacto".
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+              <InputField label="Nombre Legal Completo" name="vcard_nombre_legal" placeholder="Ej: Liliana Elizabeth Chaglla Rodríguez" value={formData.vcard_nombre_legal} onChange={handleChange} />
+              <InputField label="Teléfono de Contacto" name="vcard_telefono" placeholder="Ej: +52 55 1234 5678" value={formData.vcard_telefono} onChange={handleChange} />
+              <InputField label="Email de Contacto" name="vcard_email" placeholder="Ej: informacion@gmail.com" value={formData.vcard_email} onChange={handleChange} />
+              <InputField label="Empresa / Organización" name="vcard_company" placeholder="Ej: Crea Tu Imagen" value={formData.vcard_company} onChange={handleChange} />
+              <div className="sm:col-span-2">
+                <InputField label="Sitio Web (Opcional)" name="vcard_website" placeholder="Ej: https://lilianachaglla.com" value={formData.vcard_website} onChange={handleChange} />
+              </div>
+            </div>
+          </section>
+
         </div>
 
         {/* Columna Derecha: Acciones y Resumen */}
