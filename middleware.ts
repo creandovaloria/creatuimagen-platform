@@ -46,9 +46,10 @@ export async function middleware(request: NextRequest) {
       }
 
       // Reescribimos internamente a la ruta del perfil
+      const path = url.pathname === '/' ? '' : url.pathname
       const searchParams = url.searchParams.toString()
-      const path = `${url.pathname}${searchParams ? `?${searchParams}` : ''}`
-      const rewriteUrl = new URL(`/${perfil.slug}${path}`, request.url)
+      const queryString = searchParams ? `?${searchParams}` : ''
+      const rewriteUrl = new URL(`/${perfil.slug}${path}${queryString}`, request.url)
       
       return NextResponse.rewrite(rewriteUrl)
     }
