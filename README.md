@@ -29,14 +29,25 @@ Plataforma SaaS Multi-tenant para la gestión de perfiles digitales (`bios`) e i
 - Las contraseñas de administrador deben ser gestionadas cuidadosamente.
 - **IMPORTANTE:** No crear usuarios con correos inexistentes para evitar bloqueos de Supabase por rebotes de email.
 
-## 💰 Configuración de Pagos (Mercado Pago)
-La plataforma soporta múltiples cuentas de Mercado Pago según la unidad de negocio:
-- `MP_BIOS_ACCESS_TOKEN`: Para ventas en bios.creatuimagen.online
-- `MP_EVENTOS_ACCESS_TOKEN`: Para ventas en eventos.creatuimagen.online
-- `MP_ARTURO_ACCESS_TOKEN`: Para ventas personales en arturobarrios.com
-- `RESEND_CREA_TU_IMAGEN_API_KEY`: Para bios.creatuimagen.online y eventos.creatuimagen.online
-- `RESEND_ARTURO_API_KEY`: Para marca personal arturobarrios.com (IA y Automatización)
-- `NEXT_PUBLIC_URL`: URL base para retornos de pago (https://bios.creatuimagen.online)
+## 📊 Centro de Ventas & CRM
+La plataforma incluye un sistema de Inteligencia de Ventas (CRM) accesible en `/admin/ventas`.
+
+- **Maestro de Clientes:** Centralización de identidad por email.
+- **Inteligencia Comercial:** Registro cualitativo de cierres (Psicología de venta).
+- **Analíticas:** Contador de visitas por perfil y rastreo de origen (Instagram, Facebook, WhatsApp).
+
+## 🕵️‍♂️ Rastreo de Tráfico
+El sistema detecta automáticamente la procedencia de los visitantes mediante la cabecera `Referer`:
+- **Directo:** Tráfico desde WhatsApp o acceso directo al navegador.
+- **Instagram/Facebook/TikTok:** Identificación de tráfico desde redes sociales.
+- **Google:** Tráfico orgánico de búsqueda.
+
+## 🧪 Pruebas de Integración
+Para validar el flujo completo sin realizar pagos reales, se puede usar el script:
+```bash
+node scratch/test_final_saas.js
+```
+*Nota: Este script usa un bypass de seguridad (`TEST_PAYMENT`) habilitado solo para el administrador.*
 
 ---
 © 2026 Creando Valor IA

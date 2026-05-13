@@ -17,16 +17,16 @@ El sistema utiliza un **Middleware de Next.js** para interceptar peticiones y se
 - **Infraestructura:** Vercel.
 - **Base de Datos:** PostgreSQL (vía Supabase).
 
-## ✅ Características Implementadas (MVP)
-1. **Multi-tenancy:** Ruteo dinámico basado en `hostname`.
-2. **Admin Dashboard:** Gestión centralizada de perfiles, colores, fotos y enlaces.
-3. **Smart Links:** Los enlaces externos se sanitizan automáticamente para evitar errores de ruteo.
-4. **VCF Generation:** Generación dinámica de archivos de contacto para descarga.
-5. **Auth Robusta:** Acceso protegido para administradores con correos reales verificados.
+## ✅ Características Implementadas (Fase 2: SaaS & CRM)
+1. **CRM Maestro (Esquema `crm`):** Aislamiento de datos de clientes y ventas de la lógica operativa.
+2. **Inteligencia de Ventas:** Registro cualitativo de cierres (Título conceptual, psicología del cliente).
+3. **Analíticas Internas:** Contador de visitas real-time y detección de origen (Referer Tracking) para medir tráfico de IG, FB, WA.
+4. **UX Internacional:** Registro con selector de banderas y normalización automática de números globales.
+5. **Automatización de Webhooks:** Integración con Mercado Pago que activa CRM + Emails + Perfiles en un solo flujo.
 
 ---
 
 ## 🚀 Próximos Pasos
-1. **Módulo de Eventos:** Implementar la lógica específica para el subdominio `eventos`.
-2. **Integración con Resend:** Configurar SMTP externo para evitar bloqueos de reputación.
-3. **Analytics por Perfil:** Dashboard para que cada cliente vea sus visitas.
+1. **Dashboards para Clientes:** Permitir que los dueños de las Bios vean sus propias analíticas de tráfico.
+2. **Módulo de Ventas Manuales:** Interfaz para registrar pagos fuera de Mercado Pago (efectivo, PayPal).
+3. **Automatización de Renovaciones:** Sistema de alertas para perfiles por expirar.

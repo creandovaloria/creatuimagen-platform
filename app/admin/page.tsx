@@ -4,6 +4,8 @@ import Link from 'next/link'
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {
+  const supabase = await createClient()
+  
   // Consultamos todo lo necesario para el Centro de Comando
   const { data: perfiles } = await supabase.from('perfiles').select('*').order('created_at', { ascending: false })
   
