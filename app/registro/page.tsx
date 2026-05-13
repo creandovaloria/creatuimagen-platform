@@ -127,7 +127,7 @@ export default function RegistroPage() {
                   value={formData.whatsapp}
                   onChange={handleChange}
                   placeholder="55 1234 5678"
-                  className="w-full pl-16 pr-7 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-50 transition-all outline-none text-slate-800 font-bold text-lg"
+                  className="w-full pl-20 pr-7 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-50 transition-all outline-none text-slate-800 font-bold text-lg"
                 />
               </div>
             </div>
