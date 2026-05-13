@@ -13,7 +13,7 @@ function getResendClient(unit: BusinessUnit = 'BIOS') {
     case 'BIOS':
     case 'EVENTOS':
       apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || '';
-      fromEmail = 'Crea Tu Imagen <bienvenida@bios.creatuimagen.online>';
+      fromEmail = 'Crea Tu Imagen <bienvenida@mail.bios.creatuimagen.online>';
       break;
     case 'ARTURO':
       apiKey = process.env.RESEND_ARTURO_API_KEY || '';
