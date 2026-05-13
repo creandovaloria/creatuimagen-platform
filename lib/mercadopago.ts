@@ -6,6 +6,11 @@ import { MercadoPagoConfig } from 'mercadopago';
 export type BusinessUnit = 'BIOS' | 'EVENTOS' | 'ARTURO';
 
 export function getMercadoPagoClient(unit: BusinessUnit = 'BIOS') {
+  // Evitar errores durante el build de Next.js
+  if (typeof window === 'undefined' && process.env.NODE_ENV === 'production' && !process.env.MP_ACCESS_TOKEN && !process.env.MP_BIOS_ACCESS_TOKEN) {
+    return new MercadoPagoConfig({ accessToken: 'dummy' });
+  }
+
   let accessToken = '';
 
   switch (unit) {
@@ -18,10 +23,6 @@ export function getMercadoPagoClient(unit: BusinessUnit = 'BIOS') {
     case 'ARTURO':
       accessToken = process.env.MP_ARTURO_ACCESS_TOKEN || '';
       break;
-  }
-
-  if (!accessToken) {
-    console.warn(`⚠️ No se encontró Access Token para la unidad: ${unit}`);
   }
 
   return new MercadoPagoConfig({ accessToken });

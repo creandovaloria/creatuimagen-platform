@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const supabase = getSupabaseAdmin();
+    if (!supabase) return NextResponse.json({ error: 'System not ready' }, { status: 503 });
+    
     const client = getMercadoPagoClient('BIOS');
     const body = await request.json();
     const { type, data } = body;
