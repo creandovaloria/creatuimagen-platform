@@ -22,13 +22,20 @@ export async function POST(request: Request) {
 
       // Verificamos que el pago esté aprobado
       if (paymentData.status === 'approved') {
-        const { slug, email, nombre } = paymentData.metadata;
+        const { slug, email, nombre } = paymentData.metadata || {};
+        
+        console.log('📦 Datos recibidos del pago:', { slug, email, nombre });
+
+        if (!slug || !email) {
+          console.error('❌ Error: El pago no contiene metadata (slug/email)');
+          return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
+        }
 
         // 1. Crear el perfil en Supabase
         const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
-            nombre,
+            nombre: nombre || 'Usuario Nuevo',
             email,
             slug,
             activo: true,

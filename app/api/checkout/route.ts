@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         },
         auto_return: 'approved',
         notification_url: `${process.env.NEXT_PUBLIC_URL || 'https://bios.creatuimagen.online'}/api/webhook`,
+        external_reference: slug,
         metadata: {
           slug,
           email,

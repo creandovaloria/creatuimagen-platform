@@ -343,6 +343,12 @@ export const dynamic = 'force-dynamic';
 **Solución:** Crear un archivo local `ACCESOS.md` y añadirlo inmediatamente al `.gitignore`.  
 **Beneficio:** El desarrollador tiene un mapa claro de la infraestructura sin comprometer la seguridad del repositorio.
 
+### Decisión 20 — El Laberinto de Mercado Pago (Webhooks)
+**Problema:** El dashboard general de Mercado Pago entra en bucles infinitos y oculta la configuración de Webhooks.  
+**Solución:** Se descubrió que la única forma infalible de acceder a la edición de la App (y sus Webhooks) es vía la URL directa del panel de developers usando el ID de la aplicación:  
+`https://www.mercadopago.com.mx/developers/panel/app/[APP_ID]/edit-app`  
+**Aprendizaje:** Guardar siempre el ID de la aplicación (`6795360745009030` en este caso) para saltar directo a la configuración técnica.
+
 ---
 © 2026 Creando Valor IA
 
