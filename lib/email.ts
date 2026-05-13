@@ -81,8 +81,17 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
 export async function sendAdminNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: { nombre: string, slug: string, email: string, whatsapp?: string, unit?: BusinessUnit }) {
   try {
     const { client, from } = getResendClient(unit);
-    const cleanWhatsApp = whatsapp ? whatsapp.replace(/\D/g, '') : null;
-    const finalWhatsApp = cleanWhatsApp ? (cleanWhatsApp.startsWith('52') ? cleanWhatsApp : `52${cleanWhatsApp}`) : null;
+    let finalWhatsApp = null;
+    if (whatsapp) {
+      const clean = whatsapp.replace(/\D/g, ''); // Solo números
+      if (whatsapp.trim().startsWith('+')) {
+        finalWhatsApp = clean; // Ya tiene código de país
+      } else if (clean.length === 10) {
+        finalWhatsApp = `52${clean}`; // Es México sin código
+      } else {
+        finalWhatsApp = clean; // Asumimos que ya tiene código
+      }
+    }
     const waLink = finalWhatsApp ? `https://wa.me/${finalWhatsApp}` : null;
     
     await client.emails.send({
@@ -118,8 +127,17 @@ export async function sendAdminNotification({ nombre, slug, email, whatsapp, uni
 export async function sendAbandonmentNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
-    const cleanWhatsApp = whatsapp ? whatsapp.replace(/\D/g, '') : null;
-    const finalWhatsApp = cleanWhatsApp ? (cleanWhatsApp.startsWith('52') ? cleanWhatsApp : `52${cleanWhatsApp}`) : null;
+    let finalWhatsApp = null;
+    if (whatsapp) {
+      const clean = whatsapp.replace(/\D/g, '');
+      if (whatsapp.trim().startsWith('+')) {
+        finalWhatsApp = clean;
+      } else if (clean.length === 10) {
+        finalWhatsApp = `52${clean}`;
+      } else {
+        finalWhatsApp = clean;
+      }
+    }
     const waLink = finalWhatsApp ? `https://wa.me/${finalWhatsApp}` : null;
     
     await client.emails.send({
