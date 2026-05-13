@@ -22,9 +22,9 @@ export async function POST(request: Request) {
 
       // Verificamos que el pago esté aprobado
       if (paymentData.status === 'approved') {
-        const { slug, email, nombre } = paymentData.metadata || {};
+        const { slug, email, nombre, whatsapp } = paymentData.metadata || {};
         
-        console.log('📦 Datos recibidos del pago:', { slug, email, nombre });
+        console.log('📦 Datos recibidos del pago:', { slug, email, nombre, whatsapp });
 
         if (!slug || !email) {
           console.error('❌ Error: El pago no contiene metadata (slug/email)');
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
-            nombre: nombre || email.split('@')[0], // Fallback al email si no hay nombre
+            nombre: nombre || email.split('@')[0],
             email,
             slug,
             activo: true,
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
 
         // 2. Enviar Emails
         await sendWelcomeEmail({ nombre, slug, email, unit: 'BIOS' });
-        await sendAdminNotification({ nombre, slug, email, unit: 'BIOS' });
+        await sendAdminNotification({ nombre, slug, email, whatsapp, unit: 'BIOS' });
 
         console.log(`✅ Perfil ${slug} activado con éxito.`);
       }

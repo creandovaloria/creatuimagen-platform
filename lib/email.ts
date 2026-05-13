@@ -28,6 +28,7 @@ interface WelcomeEmailProps {
   nombre: string;
   slug: string;
   email: string;
+  whatsapp?: string;
   unit?: BusinessUnit;
 }
 
@@ -76,22 +77,63 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
   }
 }
 
-export async function sendAdminNotification({ nombre, slug, email, unit = 'BIOS' }: { nombre: string, slug: string, email: string, unit?: BusinessUnit }) {
+export async function sendAdminNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: { nombre: string, slug: string, email: string, whatsapp?: string, unit?: BusinessUnit }) {
   try {
     const { client, from } = getResendClient(unit);
+    const waLink = whatsapp ? `https://wa.me/521${whatsapp.replace(/\s+/g, '')}` : null;
     
     await client.emails.send({
       from: from,
       to: 'creandovalor.ia@gmail.com',
       subject: `💰 ¡Nueva Venta! - ${nombre}`,
       html: `
-        <h2>¡Tenemos un nuevo cliente!</h2>
-        <p><b>Nombre:</b> ${nombre}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>URL:</b> bios.creatuimagen.online/${slug}</p>
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #059669;">¡Nueva Venta Confirmada! 💰</h2>
+          <p><b>Producto:</b> Bio Digital (${unit})</p>
+          <p><b>Cliente:</b> ${nombre}</p>
+          <p><b>Email:</b> ${email}</p>
+          <p><b>WhatsApp:</b> ${whatsapp || 'No proporcionado'}</p>
+          <p><b>URL Reservada:</b> bios.creatuimagen.online/${slug}</p>
+          
+          ${waLink ? `
+            <a href="${waLink}" style="display: inline-block; background: #25d366; color: white; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+              Hablar por WhatsApp ahora
+            </a>
+          ` : ''}
+          
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+          <p style="font-size: 10px; color: #999;">Notificación automática de Crea Tu Imagen Platform</p>
+        </div>
+      `,
+    });
+export async function sendAbandonmentNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: WelcomeEmailProps) {
+  try {
+    const { client, from } = getResendClient(unit);
+    const waLink = whatsapp ? `https://wa.me/521${whatsapp.replace(/\s+/g, '')}` : null;
+    
+    await client.emails.send({
+      from: from,
+      to: 'creandovalor.ia@gmail.com',
+      subject: `⚠️ Intento de compra - ${nombre}`,
+      html: `
+        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+          <h2 style="color: #f59e0b;">⚠️ Carrito Abandonado / Intento de pago</h2>
+          <p>El cliente inició el proceso de pago pero aún no lo ha completado.</p>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+          <p><b>Cliente:</b> ${nombre}</p>
+          <p><b>WhatsApp:</b> ${whatsapp || 'No proporcionado'}</p>
+          <p><b>Email:</b> ${email}</p>
+          
+          ${waLink ? `
+            <p>Escríbele para ver si necesita ayuda:</p>
+            <a href="${waLink}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 20px; border-radius: 10px; text-decoration: none; font-weight: bold;">
+              Contactar por WhatsApp
+            </a>
+          ` : ''}
+        </div>
       `,
     });
   } catch (error) {
-    console.error('Error enviando notificación admin:', error);
+    console.error('Error enviando notificación de abandono:', error);
   }
 }

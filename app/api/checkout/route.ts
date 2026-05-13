@@ -4,10 +4,17 @@ import { getMercadoPagoClient } from '@/lib/mercadopago';
 
 export const dynamic = 'force-dynamic';
 
+import { sendAbandonmentNotification } from '@/lib/email';
+
 export async function POST(request: Request) {
   try {
+    const body = await request.json();
+    const { nombre, email, slug, whatsapp } = body;
+
+    // Notificar al admin sobre el intento de compra (Lead)
+    await sendAbandonmentNotification({ nombre, slug, email, whatsapp, unit: 'BIOS' });
+
     const client = getMercadoPagoClient('BIOS');
-    const { nombre, email, slug } = await request.json();
 
     const preference = new Preference(client);
     
@@ -37,7 +44,8 @@ export async function POST(request: Request) {
         metadata: {
           slug,
           email,
-          nombre
+          nombre,
+          whatsapp
         }
       }
     });
