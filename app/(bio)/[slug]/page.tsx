@@ -2,6 +2,7 @@ import ProfileCard from '@/components/bio/ProfileCard'
 import { getPerfilCompleto } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
+import { createClient } from '@/lib/supabase/server'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params
@@ -35,6 +36,12 @@ export default async function BioPage({ params }: { params: Promise<{ slug: stri
     console.error("Error fetching profile:", error)
     return notFound()
   }
+
+  // Incrementamos la visita de forma asíncrona
+  const supabase = await createClient()
+  supabase.rpc('increment_visitas', { target_slug: resolvedParams.slug }).then(({ error }) => {
+    if (error) console.error('Error incrementando visitas:', error)
+  })
 
   return (
     <main 

@@ -90,6 +90,7 @@ export default async function AdminDashboard() {
               <thead className="bg-slate-50/50">
                 <tr>
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Perfil</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Visitas</th>
                   <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Estado</th>
                   <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Acciones</th>
                 </tr>
@@ -106,6 +107,12 @@ export default async function AdminDashboard() {
                           <div className="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors">{perfil.nombre}</div>
                           <div className="text-[10px] font-bold text-slate-400 tracking-tighter">/{perfil.slug}</div>
                         </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="inline-flex flex-col items-center">
+                        <span className="text-sm font-black text-slate-700">{perfil.visitas || 0}</span>
+                        <span className="text-[8px] font-black text-slate-300 uppercase tracking-tighter">Vistas</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
