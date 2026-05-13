@@ -17,7 +17,6 @@ export default function RegistroPage() {
     const { name, value } = e.target
     
     if (name === 'nombre') {
-      // Generar slug automáticamente desde el nombre
       const cleanSlug = value.toLowerCase()
         .trim()
         .replace(/\s+/g, '-')
@@ -63,7 +62,15 @@ export default function RegistroPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 sm:p-6 font-sans selection:bg-blue-100">
-      <div className="max-w-[480px] w-full space-y-10 py-10">
+      
+      {/* Top Navigation / Access */}
+      <div className="fixed top-0 left-0 right-0 p-6 flex justify-end">
+        <a href="/login" className="text-xs font-black text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-[0.2em] bg-white px-6 py-3 rounded-full shadow-sm border border-slate-100">
+          Acceso Usuarios 🔑
+        </a>
+      </div>
+
+      <div className="max-w-[480px] w-full space-y-10 py-20">
         
         {/* Header */}
         <div className="text-center space-y-6">
@@ -76,8 +83,8 @@ export default function RegistroPage() {
           </div>
         </div>
 
-        {/* Formulario con todos los campos necesarios */}
-        <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/60 border border-white space-y-8">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-12 rounded-[3.5rem] shadow-2xl shadow-slate-200/60 border border-white space-y-8 relative">
           
           <div className="space-y-6">
             {/* Nombre */}
@@ -143,7 +150,7 @@ export default function RegistroPage() {
             </div>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-5 pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
@@ -156,17 +163,19 @@ export default function RegistroPage() {
               {isSubmitting ? 'Cargando...' : 'Obtener mi Bio — $299'}
             </button>
 
-            <div className="flex items-center justify-center gap-3 opacity-30">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Pago Seguro</span>
-              <img src="https://logodownload.org/wp-content/uploads/2019/06/mercado-pago-logo.png" alt="Mercado Pago" className="h-3 grayscale" />
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex items-center gap-2 opacity-20">
+                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em]">Pago Seguro</span>
+                <img src="https://logodownload.org/wp-content/uploads/2019/06/mercado-pago-logo.png" alt="Mercado Pago" className="h-2.5 grayscale" />
+              </div>
             </div>
           </div>
 
         </form>
 
-        <div className="text-center">
-          <p className="text-slate-400 font-bold text-sm">
-            ¿Ya tienes cuenta? <a href="/login" className="text-blue-600 hover:underline decoration-2 ml-1">Inicia sesión</a>
+        <div className="text-center pt-4">
+          <p className="text-[10px] text-slate-400 font-medium leading-relaxed max-w-[280px] mx-auto">
+            Recibirás tus accesos vía WhatsApp y Email inmediatamente después del pago.
           </p>
         </div>
       </div>
