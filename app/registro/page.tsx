@@ -27,6 +27,7 @@ export default function RegistroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setIsLoading(true)
     
     try {
       const response = await fetch('/api/checkout', {
@@ -46,6 +47,8 @@ export default function RegistroPage() {
     } catch (error: any) {
       alert(`❌ Error: ${error.message}`)
       setIsSubmitting(false)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -111,11 +114,16 @@ export default function RegistroPage() {
             </div>
           </div>
 
-          <button 
+          <button
+            type="submit"
             disabled={isSubmitting}
-            className="w-full bg-slate-900 hover:bg-black text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-slate-900/10 active:scale-[0.98] disabled:opacity-50"
+            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl ${
+              isSubmitting 
+              ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
+              : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.01] shadow-blue-600/20'
+            }`}
           >
-            {isSubmitting ? 'Procesando...' : 'Obtener mi Bio ahora — $299 MXN'}
+            {isSubmitting ? 'Procesando pago...' : 'Continuar al Pago'}
           </button>
 
           <div className="flex items-center justify-center gap-2 pt-2">
