@@ -11,7 +11,7 @@ interface WelcomeEmailProps {
 export async function sendWelcomeEmail({ nombre, slug, email }: WelcomeEmailProps) {
   try {
     const data = await resend.emails.send({
-      from: 'Crea Tu Imagen <onboarding@invitaciones.arturobarrios.com>', 
+      from: 'Crea Tu Imagen <bienvenida@invitaciones.arturobarrios.com>', 
       to: email,
       subject: '¡Tu Bio Profesional ya está lista! 🚀',
       html: `
@@ -42,7 +42,7 @@ export async function sendWelcomeEmail({ nombre, slug, email }: WelcomeEmailProp
 export async function sendAdminNotification({ nombre, email, slug }: WelcomeEmailProps) {
   try {
     await resend.emails.send({
-      from: 'Sistema <onboarding@invitaciones.arturobarrios.com>',
+      from: 'Crea Tu Imagen <ventas@invitaciones.arturobarrios.com>',
       to: 'creandovaloria@gmail.com',
       subject: '💰 ¡Nueva Venta! - Crea Tu Imagen',
       html: `
