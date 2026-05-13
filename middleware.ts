@@ -31,7 +31,8 @@ export async function middleware(request: NextRequest) {
     )
 
     // Buscamos si el dominio (o su versión sin www) está en la DB
-    const cleanHostname = hostname.replace('www.', '')
+    const cleanHostname = hostname.split(':')[0].replace(/^www\./, '')
+    
     const { data: perfil } = await supabase
       .from('perfiles')
       .select('slug')
