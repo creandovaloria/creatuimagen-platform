@@ -385,6 +385,20 @@ export const dynamic = 'force-dynamic';
 2.  **Valores por Defecto:** Configurar valores `DEFAULT` en Supabase para columnas obligatorias (ej: `rol`, `activo`, `theme_primary`). Esto hace que la base de datos sea resiliente aunque el código falle.
 3.  **Logs de Error Detallados:** Siempre capturar y mostrar el objeto `dbError` en los logs del servidor para diagnosticar fallos en segundos.
 
+### Error 18 — RLS no funciona en Server Components (SSR)
+**Síntoma:** El cliente logueado seguía viendo todos los perfiles de la base de datos.  
+**Causa:** Se usaba un cliente de Supabase estático que no pasaba los tokens de sesión del usuario al servidor.  
+**Solución:** Migrar a `@supabase/ssr` y usar `createClient()` en el servidor pasándole las cookies. Además, forzar el renderizado dinámico con `export const dynamic = 'force-dynamic'` para evitar datos cacheados de otros usuarios.
+
+### Error 19 — Service Role Key expuesta en `NEXT_PUBLIC_`
+**Riesgo:** Tener la clave maestra en una variable `NEXT_PUBLIC_` anula el RLS y permite a cualquier usuario editar cualquier dato desde el navegador.  
+**Solución:** Usar SOLO la clave **anon/public** para variables `NEXT_PUBLIC_`. La `SERVICE_ROLE_KEY` debe estar en variables privadas (sin el prefijo `NEXT_PUBLIC_`) y usarse solo en el servidor (como webhooks).
+
+### Decisión 24 — Fotos de Perfil en VCard (.vcf)
+**Problema:** Los contactos descargados no mostraban la foto en el celular.  
+**Solución:** En el endpoint `/api/vcf/[slug]`, descargar la imagen de Supabase Storage, convertirla a Base64 e incrustarla directamente en el campo `PHOTO;ENCODING=b;TYPE=JPEG:[BASE64]`.  
+**Beneficio:** Experiencia premium donde el cliente guarda el contacto con foto incluida automáticamente.
+
 ---
 © 2026 Creando Valor IA
 
