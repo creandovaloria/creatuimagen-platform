@@ -2,15 +2,14 @@
 
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, Suspense } from 'react'
 import confetti from 'canvas-confetti'
 
-export default function ExitoPage() {
+function ExitoContent() {
   const searchParams = useSearchParams()
   const slug = searchParams.get('slug')
   
   useEffect(() => {
-    // 🎉 Lanzar confeti al cargar la página
     confetti({
       particleCount: 150,
       spread: 70,
@@ -23,7 +22,6 @@ export default function ExitoPage() {
     <div className="min-h-screen bg-[#fcfcfc] flex flex-col items-center justify-center p-6 text-center">
       <div className="max-w-md w-full space-y-8 animate-in fade-in zoom-in duration-500">
         
-        {/* Icono de éxito */}
         <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 text-green-600 rounded-full mb-4">
           <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
@@ -35,7 +33,6 @@ export default function ExitoPage() {
           <p className="text-slate-500 text-lg">Tu presencia digital acaba de subir de nivel.</p>
         </div>
 
-        {/* Card del link */}
         <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-slate-100 space-y-6">
           <div>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Tu nueva dirección es:</p>
@@ -67,14 +64,15 @@ export default function ExitoPage() {
             </p>
           </div>
         </div>
-
-        <Link href="/" className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors">
-          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Volver al inicio
-        </Link>
       </div>
     </div>
+  )
+}
+
+export default function ExitoPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando...</div>}>
+      <ExitoContent />
+    </Suspense>
   )
 }
