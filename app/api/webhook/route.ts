@@ -64,7 +64,18 @@ export async function POST(request: Request) {
             console.error('❌ Error gestionando cliente en CRM:', clienteError);
           }
 
-          // 2. Crear el perfil en Supabase (VINCULADO AL CLIENTE)
+          // 2. CREAR USUARIO EN AUTH (Invitación)
+          // Esto envía un correo automático de Supabase para que el usuario ponga su contraseña
+          const { data: authUser, error: authError } = await supabase.auth.admin.inviteUserByEmail(email, {
+            data: { nombre, slug, role: 'cliente' },
+            redirectTo: `https://bios.creatuimagen.online/admin/perfiles/${slug}`
+          });
+
+          if (authError) {
+            console.error('⚠️ Error invitando usuario (posiblemente ya existe):', authError.message);
+          }
+
+          // 3. Crear el perfil en Supabase (VINCULADO AL CLIENTE Y AL AUTH USER)
           const { error: dbError } = await supabase
             .from('perfiles')
             .insert({
@@ -74,7 +85,8 @@ export async function POST(request: Request) {
               whatsapp: whatsapp || null,
               activo: true,
               rol: 'cliente',
-              cliente_id: cliente?.id || null
+              cliente_id: cliente?.id || null,
+              user_id: authUser?.user?.id || null // <--- Vínculo clave para seguridad
             });
 
           if (dbError) {

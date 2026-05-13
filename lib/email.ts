@@ -55,6 +55,12 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
             <a href="https://bios.creatuimagen.online/${slug}" style="font-size: 22px; font-weight: 800; color: #2563eb; text-decoration: none;">bios.creatuimagen.online/${slug}</a>
           </div>
 
+          <div style="background: #fffbeb; padding: 20px; border-radius: 16px; border: 1px solid #fef3c7; margin-bottom: 30px;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #92400e;">🔑 Datos de Acceso:</p>
+            <p style="margin: 0; font-size: 14px; color: #b45309;"><b>Email:</b> ${email}</p>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #d97706;"><i>* Recibirás un segundo correo de "Supabase" para crear tu contraseña.</i></p>
+          </div>
+
           <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin-top: 30px;">Próximo paso: Personalización</p>
           <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">Ahora solo falta que subas tu foto y agregues tus redes sociales para que tu Bio se vea increíble.</p>
           
@@ -63,7 +69,7 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
             Personalizar mi Perfil ahora
           </a>
 
-          <a href="https://wa.me/525555027042?text=Hola!%20Necesito%20ayuda%20con%20mi%20Bio%20${slug}" 
+          <a href="https://wa.me/525555027042?text=Hola!%20Soy%20${encodeURIComponent(nombre)}.%20Necesito%20ayuda%20con%20mi%20Bio:%20bios.creatuimagen.online/${slug}.%20Mi%20correo%20es:%20${email}" 
              style="display: block; background: #f8fafc; color: #2563eb; padding: 15px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px; border: 1px solid #e2e8f0;">
             💬 Hablar con soporte por WhatsApp
           </a>
