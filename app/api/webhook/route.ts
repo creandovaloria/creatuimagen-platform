@@ -49,8 +49,8 @@ export async function POST(request: Request) {
         }
 
         // 2. Enviar Emails
-        await sendWelcomeEmail({ slug, email, unit: 'BIOS' });
-        await sendAdminNotification({ slug, email, unit: 'BIOS' });
+        await sendWelcomeEmail({ nombre, slug, email, unit: 'BIOS' });
+        await sendAdminNotification({ nombre, slug, email, unit: 'BIOS' });
 
         console.log(`✅ Perfil ${slug} activado con éxito.`);
       }
