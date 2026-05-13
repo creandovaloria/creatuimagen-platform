@@ -36,6 +36,7 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
   try {
     const { client, from } = getResendClient(unit);
     
+    const data = await client.emails.send({
       from: from, 
       to: email,
       replyTo: 'arturo.barrios@bios.creatuimagen.online',
