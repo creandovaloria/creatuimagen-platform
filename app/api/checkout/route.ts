@@ -1,10 +1,9 @@
 import { Preference } from 'mercadopago';
 import { NextResponse } from 'next/server';
 import { getMercadoPagoClient } from '@/lib/mercadopago';
+import { sendAbandonmentNotification } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
-
-import { sendAbandonmentNotification } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {

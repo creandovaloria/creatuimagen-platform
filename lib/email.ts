@@ -106,6 +106,11 @@ export async function sendAdminNotification({ nombre, slug, email, whatsapp, uni
         </div>
       `,
     });
+  } catch (error) {
+    console.error('Error enviando notificación admin:', error);
+  }
+}
+
 export async function sendAbandonmentNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
