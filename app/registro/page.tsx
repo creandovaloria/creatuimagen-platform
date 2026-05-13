@@ -27,7 +27,6 @@ export default function RegistroPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setIsLoading(true)
     
     try {
       const response = await fetch('/api/checkout', {
@@ -44,11 +43,8 @@ export default function RegistroPage() {
       } else {
         throw new Error(data.error || 'No se pudo crear la preferencia de pago')
       }
-    } catch (error: any) {
-      alert(`❌ Error: ${error.message}`)
-      setIsSubmitting(false)
     } finally {
-      setIsLoading(false)
+      setIsSubmitting(false)
     }
   }
 
