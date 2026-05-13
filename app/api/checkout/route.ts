@@ -4,10 +4,9 @@ import { getMercadoPagoClient } from '@/lib/mercadopago';
 
 export const dynamic = 'force-dynamic';
 
-const client = getMercadoPagoClient('BIOS');
-
 export async function POST(request: Request) {
   try {
+    const client = getMercadoPagoClient('BIOS');
     const { nombre, email, slug } = await request.json();
 
     const preference = new Preference(client);
