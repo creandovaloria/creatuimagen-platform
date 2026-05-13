@@ -1,8 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/proxy'
+import { updateSession } from '@/lib/supabase/middleware'
 import { createClient } from '@supabase/supabase-js'
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const url = request.nextUrl
   const hostname = request.headers.get('host')?.toLowerCase() || ''
 
