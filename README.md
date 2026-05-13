@@ -29,5 +29,12 @@ Plataforma SaaS Multi-tenant para la gestión de perfiles digitales (`bios`) e i
 - Las contraseñas de administrador deben ser gestionadas cuidadosamente.
 - **IMPORTANTE:** No crear usuarios con correos inexistentes para evitar bloqueos de Supabase por rebotes de email.
 
+## 💰 Configuración de Pagos (Mercado Pago)
+La plataforma soporta múltiples cuentas de Mercado Pago según la unidad de negocio:
+- `MP_BIOS_ACCESS_TOKEN`: Para ventas en bios.creatuimagen.online
+- `MP_EVENTOS_ACCESS_TOKEN`: Para ventas en eventos.creatuimagen.online
+- `MP_ARTURO_ACCESS_TOKEN`: Para ventas personales en arturobarrios.com
+- `NEXT_PUBLIC_URL`: URL base para retornos de pago (https://bios.creatuimagen.online)
+
 ---
 © 2026 Creando Valor IA
