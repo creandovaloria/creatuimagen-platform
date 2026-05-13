@@ -13,7 +13,7 @@ function getResendClient(unit: BusinessUnit = 'BIOS') {
     case 'BIOS':
     case 'EVENTOS':
       apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || '';
-      fromEmail = 'Crea Tu Imagen <bienvenida@creatuimagen.online>';
+      fromEmail = 'Crea Tu Imagen <bienvenida@bios.creatuimagen.online>';
       break;
     case 'ARTURO':
       apiKey = process.env.RESEND_ARTURO_API_KEY || '';
@@ -39,6 +39,7 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
     const data = await client.emails.send({
       from: from, 
       to: email,
+      reply_to: 'arturo.barrios@bios.creatuimagen.online',
       subject: `¡Tu Bio ya está reservada, ${nombre}! 🚀`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; padding: 40px; color: #1e293b; background: white;">
@@ -85,6 +86,7 @@ export async function sendAdminNotification({ nombre, slug, email, whatsapp, uni
     await client.emails.send({
       from: from,
       to: 'creandovalor.ia@gmail.com',
+      reply_to: 'arturo.barrios@bios.creatuimagen.online',
       subject: `💰 ¡Nueva Venta! - ${nombre}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
@@ -119,6 +121,7 @@ export async function sendAbandonmentNotification({ nombre, slug, email, whatsap
     await client.emails.send({
       from: from,
       to: 'creandovalor.ia@gmail.com',
+      reply_to: 'arturo.barrios@bios.creatuimagen.online',
       subject: `⚠️ Intento de compra - ${nombre}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
