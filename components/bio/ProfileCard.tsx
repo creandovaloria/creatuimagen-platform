@@ -17,6 +17,26 @@ export default function ProfileCard({ profile }: ProfileProps) {
     return `https://${url}`
   }
 
+  // Función específica para WhatsApp que limpia el número y genera el link wa.me
+  const formatWhatsAppLink = (input: string | null) => {
+    if (!input) return '#'
+    
+    // Si ya es un link completo de wa.me o api.whatsapp, lo dejamos pasar tras asegurar https
+    if (input.includes('wa.me') || input.includes('whatsapp.com')) {
+      return input.startsWith('http') ? input : `https://${input}`
+    }
+
+    // Si es solo un número, lo limpiamos
+    let number = input.replace(/\D/g, '') // Solo números
+    
+    // Caso México: Si empieza con 521, quitar el 1 (obsoleto y da error en algunos dispositivos)
+    if (number.startsWith('521') && number.length > 11) {
+      number = '52' + number.substring(3)
+    }
+
+    return `https://wa.me/${number}`
+  }
+
   return (
     <div className="w-full max-w-md bg-white/90 backdrop-blur-2xl border border-slate-100 rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] overflow-hidden animate-in fade-in zoom-in duration-500">
       {/* Banner / Top decorative section */}
@@ -117,7 +137,7 @@ export default function ProfileCard({ profile }: ProfileProps) {
           )}
           {profile.whatsapp && (
             <a 
-              href={ensureExternalLink(profile.whatsapp)} 
+              href={formatWhatsAppLink(profile.whatsapp)} 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center justify-center w-14 h-14 rounded-full transition-all duration-300 hover:scale-110 hover:-translate-y-1 shadow-md hover:shadow-xl" 
