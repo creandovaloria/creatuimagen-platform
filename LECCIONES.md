@@ -410,6 +410,11 @@ export const dynamic = 'force-dynamic';
 2. **Key Security:** Mover la `SERVICE_ROLE_KEY` a variables privadas y usar solo `anon` para el frontend.
 3. **SSR & Dynamic:** Usar `@supabase/ssr` y `export const dynamic = 'force-dynamic'` en las rutas de administración.
 
+### Error 21 — RLS bloquea el Ruteo en el Middleware
+**Problema:** Al activar RLS y cambiar la clave pública a `anon`, el Middleware dejó de encontrar los dominios personalizados en la base de datos, redirigiendo a todos los usuarios a la Landing Page.  
+**Causa:** El Middleware realiza consultas como un "visitante anónimo". Bajo RLS, un visitante anónimo no tiene permisos para ver la tabla `perfiles`, por lo que la consulta siempre devolvía vacío.  
+**Solución:** Cambiar el cliente de Supabase dentro de `middleware.ts` para que use la `SUPABASE_SERVICE_ROLE_KEY`. Esto permite que el sistema de ruteo tenga permisos de superusuario para encontrar el `slug` correspondiente, mientras que el resto de la aplicación sigue protegida por RLS para el usuario final.
+
 ---
 © 2026 Creando Valor IA
 
