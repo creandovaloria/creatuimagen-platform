@@ -1,6 +1,9 @@
 import { Resend } from 'resend';
 
-type BusinessUnit = 'BIOS' | 'EVENTOS' | 'ARTURO';
+/**
+ * Gestor de Emails por Unidad de Negocio (Resend)
+ */
+export type BusinessUnit = 'BIOS' | 'EVENTOS' | 'ARTURO';
 
 function getResendClient(unit: BusinessUnit = 'BIOS') {
   let apiKey = '';
@@ -8,12 +11,9 @@ function getResendClient(unit: BusinessUnit = 'BIOS') {
 
   switch (unit) {
     case 'BIOS':
-      apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || process.env.RESEND_API_KEY || '';
-      fromEmail = 'Crea Tu Imagen - Bios <bienvenida@creatuimagen.online>'; 
-      break;
     case 'EVENTOS':
       apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || '';
-      fromEmail = 'Crea Tu Imagen - Eventos <hola@creatuimagen.online>';
+      fromEmail = 'Crea Tu Imagen <bienvenida@creatuimagen.online>';
       break;
     case 'ARTURO':
       apiKey = process.env.RESEND_ARTURO_API_KEY || '';
@@ -25,60 +25,69 @@ function getResendClient(unit: BusinessUnit = 'BIOS') {
 }
 
 interface WelcomeEmailProps {
-  nombre: string;
   slug: string;
   email: string;
   unit?: BusinessUnit;
 }
 
-export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: WelcomeEmailProps) {
+export async function sendWelcomeEmail({ slug, email, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
     
     const data = await client.emails.send({
       from: from, 
       to: email,
-      subject: '¡Tu Bio Profesional ya está lista! 🚀',
+      subject: '¡Tu Bio ya está reservada! Configúrala ahora 🚀',
       html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 20px; padding: 40px; color: #333;">
-          <h1 style="color: #2563eb; font-size: 24px; font-weight: 900;">¡Hola ${nombre}!</h1>
-          <p style="font-size: 16px; line-height: 1.6;">Gracias por confiar en <b>Crea Tu Imagen</b>. Tu tarjeta digital ya está activa y lista para que la compartas con el mundo.</p>
-          
-          <div style="background: #f8fafc; padding: 20px; border-radius: 15px; margin: 30px 0; text-align: center;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; color: #64748b;">Tu link personal:</p>
-            <a href="https://bios.creatuimagen.online/${slug}" style="font-size: 20px; font-weight: bold; color: #2563eb; text-decoration: none;">bios.creatuimagen.online/${slug}</a>
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; padding: 40px; color: #1e293b; background: white;">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <div style="background: #2563eb; color: white; width: 60px; height: 60px; line-height: 60px; border-radius: 18px; display: inline-block; font-size: 32px; font-weight: 900; font-style: italic;">B</div>
           </div>
 
-          <p style="font-size: 14px; color: #64748b;">Puedes entrar a editar tu perfil en cualquier momento desde nuestro panel de administración.</p>
+          <h1 style="color: #0f172a; font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 10px;">¡Todo listo! 🚀</h1>
+          <p style="font-size: 16px; line-height: 1.6; text-align: center; color: #64748b;">Tu pago ha sido confirmado y tu link personal ha sido reservado con éxito.</p>
           
-          <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
-          <p style="font-size: 12px; color: #94a3b8; text-align: center;">© 2026 Creando Valor IA</p>
+          <div style="background: #f8fafc; padding: 24px; border-radius: 20px; margin: 30px 0; text-align: center; border: 1px dashed #e2e8f0;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking: 0.1em;">Tu link es:</p>
+            <a href="https://bios.creatuimagen.online/${slug}" style="font-size: 22px; font-weight: 800; color: #2563eb; text-decoration: none;">bios.me/${slug}</a>
+          </div>
+
+          <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin-top: 30px;">Próximo paso: Personalización</p>
+          <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">Para que tu Bio se vea profesional, necesitamos que subas tu foto, pongas tu nombre real y agregues tus redes sociales.</p>
+          
+          <a href="https://bios.creatuimagen.online/admin/perfiles/${slug}" 
+             style="display: block; background: #2563eb; color: white; padding: 20px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+            Personalizar mi Perfil ahora
+          </a>
+
+          <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #f1f5f9; text-align: center;">
+            <p style="font-size: 12px; color: #94a3b8; margin: 0;">¿Alguna duda? Responde a este correo y te ayudaremos.</p>
+            <p style="font-size: 12px; color: #cbd5e1; margin-top: 10px; font-weight: bold;">CREA TU IMAGEN .</p>
+          </div>
         </div>
       `,
     });
 
     return { success: true, data };
   } catch (error) {
-    console.error('Error enviando email:', error);
+    console.error('Error enviando email de bienvenida:', error);
     return { success: false, error };
   }
 }
 
-export async function sendAdminNotification({ nombre, email, slug, unit = 'BIOS' }: WelcomeEmailProps) {
+export async function sendAdminNotification({ slug, email, unit = 'BIOS' }: { slug: string, email: string, unit?: BusinessUnit }) {
   try {
     const { client, from } = getResendClient(unit);
-    const salesEmail = from.replace('bienvenida', 'ventas').replace('hola', 'ventas');
-
+    
     await client.emails.send({
-      from: salesEmail,
-      to: 'creandovaloria@gmail.com',
-      subject: '💰 ¡Nueva Venta! - Crea Tu Imagen',
+      from: from,
+      to: 'creandovalor.ia@gmail.com',
+      subject: `💰 ¡Nueva Venta! - ${unit}`,
       html: `
-        <h2>¡Acabas de vender una Bio!</h2>
-        <p><b>Cliente:</b> ${nombre}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Slug:</b> ${slug}</p>
+        <h2>¡Tenemos un nuevo cliente!</h2>
         <p><b>Unidad:</b> ${unit}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>URL:</b> bios.creatuimagen.online/${slug}</p>
       `,
     });
   } catch (error) {

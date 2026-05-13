@@ -55,12 +55,12 @@ function ExitoContent() {
           <div className="space-y-3 pt-2">
             <Link 
               href={`/admin/perfiles/${slug}`}
-              className="block w-full bg-slate-900 hover:bg-black text-white py-4 rounded-2xl font-bold transition-all shadow-xl shadow-slate-900/10 active:scale-[0.98]"
+              className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-xl transition-all shadow-xl shadow-blue-600/20 active:scale-[0.98]"
             >
-              Personalizar mi Perfil
+              Configurar mi Bio ahora
             </Link>
-            <p className="text-[10px] text-slate-400">
-              Te enviamos los accesos y el recibo a tu correo electrónico.
+            <p className="text-[11px] text-slate-400 font-medium">
+              Te enviamos un email con el link de acceso por si quieres configurarla después.
             </p>
           </div>
         </div>
