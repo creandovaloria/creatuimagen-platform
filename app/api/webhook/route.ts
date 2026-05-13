@@ -18,8 +18,26 @@ export async function POST(request: Request) {
     // Solo nos interesan los pagos
     if (type === 'payment') {
       try {
-        const payment = new Payment(client);
-        const paymentData = await payment.get({ id: data.id });
+        const paymentId = data.id;
+        let paymentData;
+
+        // MODO PRUEBA: Si el ID es de prueba, inyectamos datos ficticios para validar el CRM
+        if (paymentId.toString().startsWith('TEST_PAYMENT')) {
+          paymentData = {
+            status: 'approved',
+            transaction_amount: 950,
+            metadata: {
+              email: 'rafart.barrios@gmail.com',
+              nombre: 'Arturo Barrios Test',
+              whatsapp: '5512345678',
+              slug: 'perfil-test-crm'
+            }
+          };
+          console.log('🧪 MODO PRUEBA ACTIVADO: Procesando datos ficticios para CRM');
+        } else {
+          const payment = new Payment(client);
+          paymentData = await payment.get({ id: paymentId });
+        }
 
         // Verificamos que el pago esté aprobado
         if (paymentData && paymentData.status === 'approved') {

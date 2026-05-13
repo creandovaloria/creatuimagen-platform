@@ -424,6 +424,26 @@ export const dynamic = 'force-dynamic';
 **Concepto:** Los clientes finales (inquilinos) nunca deben ver herramientas de infraestructura.  
 **Implementación:** Usar condicionales basados en el email o rol del usuario en el Layout para ocultar secciones de sistema (Vercel, Supabase, Logs). Esto mejora la percepción de marca y reduce la confusión del usuario.
 
+### Decisión 25 — Arquitectura CRM y Ventas Inteligentes
+**Problema:** Los datos de ventas y clientes estaban mezclados con los datos de la aplicación (perfiles).
+**Solución:** Crear un esquema dedicado `crm` en la base de datos.
+**Beneficio:** Aislamiento total. Puedes borrar o resetear la aplicación sin perder tu historial de ventas ni tu lista de clientes. Permite una visión 360 del cliente (saber si un mismo usuario tiene Bio y Eventos).
+
+### Decisión 26 — Analíticas Internas vs Externas
+**Lección:** Google Analytics es para marketing, pero las analíticas internas son para **valor del cliente**.
+**Implementación:** Creamos un rastreador en tiempo real en Supabase que detecta el `Referer` (Instagram, Facebook, Directo).
+**Ventaja:** Puedes mostrarle a tus clientes cuántas visitas tienen directamente en su panel, sin que ellos tengan que entender herramientas complejas de Google.
+
+### Error 23 — Invalid Schema: crm
+**Síntoma:** Error 500 o "Invalid schema: crm" al intentar cargar ventas.
+**Causa:** Supabase bloquea por seguridad el acceso a esquemas que no sean `public` vía API.
+**Solución:** Habilitar manualmente el esquema `crm` en **Settings -> API -> Exposed Schemas** dentro del dashboard de Supabase.
+
+### Error 24 — Enlaces de WhatsApp rotos (El "1" maldito)
+**Problema:** Los links `wa.me/521...` fallaban en móviles modernos o con cuentas de WhatsApp Business.
+**Solución:** Eliminar el prefijo `1` (obsoleto en México) y limpiar el número de cualquier símbolo.
+**Mejora Internacional:** Implementar lógica que detecta si el número ya tiene código de país (empieza con `+`) o si debe asumir el `52` de México.
+
 ---
 © 2026 Creando Valor IA
 
