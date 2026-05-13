@@ -25,6 +25,8 @@ export default function RegistroPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
+    
     setLoading(true);
 
     try {
@@ -40,119 +42,119 @@ export default function RegistroPage() {
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
-      <div className="w-full max-w-md space-y-8">
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center py-12 px-4 font-sans">
+      <div className="w-full max-w-[440px] space-y-8">
         
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-blue-600 text-white text-4xl font-black italic shadow-2xl shadow-blue-200">
-            B
+        {/* Logo & Header */}
+        <div className="flex flex-col items-center space-y-6">
+          <div className="w-16 h-16 bg-blue-600 rounded-2xl rotate-3 shadow-xl flex items-center justify-center transform hover:rotate-0 transition-transform">
+            <span className="text-white text-3xl font-black italic">B</span>
           </div>
-          <div className="space-y-2">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight">Tu Bio Pro</h1>
-            <p className="text-slate-500 font-medium text-lg">Reserva tu lugar en internet hoy.</p>
+          <div className="text-center">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Tu Bio Profesional</h1>
+            <p className="text-slate-500 font-medium mt-1">Crea tu presencia digital en segundos.</p>
           </div>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="bg-white p-10 rounded-[3rem] shadow-xl shadow-slate-200/60 border border-slate-100 space-y-8">
-          
-          <div className="space-y-6">
-            
-            {/* Campo: Nombre */}
-            <div className="group space-y-2">
-              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-blue-500">
-                Tu Nombre
-              </label>
-              <input
-                type="text"
-                placeholder="Ej. Arturo Barrios"
-                required
-                className="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold text-lg placeholder:text-slate-300"
-                value={formData.nombre}
-                onChange={(e) => handleNombreChange(e.target.value)}
-              />
-            </div>
-
-            {/* Campo: Email */}
-            <div className="group space-y-2">
-              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-blue-500">
-                Email Profesional
-              </label>
-              <input
-                type="email"
-                placeholder="hola@ejemplo.com"
-                required
-                className="w-full px-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold text-lg placeholder:text-slate-300"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              />
-            </div>
-
-            {/* Campo: WhatsApp */}
-            <div className="group space-y-2">
-              <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-green-500">
-                WhatsApp (Envío de Accesos)
-              </label>
-              <div className="relative">
-                <span className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-300 font-black text-lg">+</span>
-                <input
-                  type="tel"
-                  placeholder="52 1 123 456 7890"
-                  required
-                  className="w-full pl-12 pr-8 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-green-100 transition-all outline-none text-slate-800 font-bold text-lg placeholder:text-slate-300"
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                />
-              </div>
-            </div>
-
-            {/* Campo: Link */}
-            <div className="p-8 bg-blue-50/50 rounded-[2.5rem] border border-blue-100/50 space-y-3">
-              <label className="text-[10px] font-black text-blue-400 uppercase tracking-widest">URL Personalizada</label>
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center text-blue-600 font-black text-lg truncate">
-                  <span className="opacity-30">bios.creatuimagen.online/</span>
-                  <span className="text-blue-700 underline decoration-blue-200 underline-offset-4">{formData.slug || 'tu-link'}</span>
-                </div>
-                <input
-                  type="text"
-                  placeholder="personaliza-tu-link"
-                  className="w-full px-6 py-3 bg-white border border-blue-100 rounded-xl outline-none focus:border-blue-300 text-sm font-bold text-blue-800 placeholder:text-blue-200 transition-all"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
-                />
-              </div>
-            </div>
-
+        {/* Card Formulario */}
+        <form 
+          onSubmit={handleSubmit} 
+          className="bg-white border border-slate-100 rounded-[2.5rem] shadow-2xl shadow-slate-200/50 p-8 md:p-10 space-y-6"
+        >
+          {/* Campo: Nombre */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Tu Nombre Completo</label>
+            <input
+              type="text"
+              placeholder="Ej. Arturo Barrios"
+              required
+              className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold"
+              value={formData.nombre}
+              onChange={(e) => handleNombreChange(e.target.value)}
+            />
           </div>
 
-          {/* Botón */}
-          <div className="space-y-4">
+          {/* Campo: Email */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Email de Acceso</label>
+            <input
+              type="email"
+              placeholder="hola@ejemplo.com"
+              required
+              className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            />
+          </div>
+
+          {/* Campo: WhatsApp */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">WhatsApp (con +52, +1, etc)</label>
+            <input
+              type="tel"
+              placeholder="+52 55 1234 5678"
+              required
+              className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-100 transition-all outline-none text-slate-800 font-bold"
+              value={formData.whatsapp}
+              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+            />
+          </div>
+
+          {/* Campo: URL Personalizada */}
+          <div className="bg-blue-50/50 rounded-3xl p-6 border border-blue-100/50 space-y-3">
+            <label className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">URL Reservada</label>
+            <div className="space-y-2">
+              <div className="text-blue-600 font-black text-sm break-all">
+                bios.creatuimagen.online/<span className="text-blue-800 underline decoration-blue-200">{formData.slug || 'tu-link'}</span>
+              </div>
+              <input
+                type="text"
+                placeholder="personalizar-link"
+                className="w-full px-4 py-2 bg-white border border-blue-100 rounded-xl outline-none focus:border-blue-300 text-xs font-bold text-blue-900"
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
+              />
+            </div>
+          </div>
+
+          {/* Botón de Pago */}
+          <div className="pt-2">
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-6 rounded-[2rem] text-xl shadow-2xl shadow-blue-200 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 flex items-center justify-center space-x-3"
+              className="relative w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl text-lg shadow-xl shadow-blue-100 transition-all transform hover:-translate-y-1 active:translate-y-0 disabled:opacity-50 overflow-hidden"
             >
-              <span>{loading ? 'Preparando...' : 'Obtener mi Bio — $299'}</span>
+              <div className="relative z-10 flex items-center justify-center">
+                {loading ? (
+                  <span className="flex items-center space-x-2">
+                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Procesando...</span>
+                  </span>
+                ) : (
+                  "Obtener mi Bio — $299 MXN"
+                )}
+              </div>
             </button>
-            <div className="flex items-center justify-center space-x-2 text-slate-400">
-              <span className="text-[10px] font-bold uppercase tracking-tighter">Pago Seguro vía Mercado Pago</span>
-            </div>
+            <p className="text-center text-[10px] text-slate-400 font-bold uppercase mt-4 tracking-tighter">
+              🔒 Pago seguro procesado por Mercado Pago
+            </p>
           </div>
-
         </form>
 
-        <p className="text-center text-slate-400 text-xs px-10 leading-relaxed">
-          Al hacer clic en el botón, serás redirigido a Mercado Pago para finalizar tu compra. Recibirás tus accesos de inmediato.
+        {/* Footer info */}
+        <p className="text-center text-slate-400 text-[11px] leading-relaxed px-6">
+          Al continuar, aceptas que te enviemos tus accesos vía WhatsApp y Email. El proceso de configuración toma menos de 2 minutos.
         </p>
-
       </div>
     </div>
   );

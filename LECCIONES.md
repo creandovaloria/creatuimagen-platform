@@ -377,5 +377,14 @@ export const dynamic = 'force-dynamic';
 - **Lección:** Los Webhooks deben ser "resilientes" a datos basura o de prueba para evitar bloqueos en las herramientas de integración.
 
 ---
+
+### Decisión 23 — Sincronización DB-Código (Best Practices)
+**Problema:** Los errores "400 Bad Request" ocurren cuando el código intenta insertar datos en columnas inexistentes o faltan campos obligatorios.  
+**Solución:**
+1.  **Tipado Estricto:** Usar Supabase CLI para generar tipos de TypeScript automáticamente. Esto evita errores de dedo (ej: `primary_color` vs `theme_primary`).
+2.  **Valores por Defecto:** Configurar valores `DEFAULT` en Supabase para columnas obligatorias (ej: `rol`, `activo`, `theme_primary`). Esto hace que la base de datos sea resiliente aunque el código falle.
+3.  **Logs de Error Detallados:** Siempre capturar y mostrar el objeto `dbError` en los logs del servidor para diagnosticar fallos en segundos.
+
+---
 © 2026 Creando Valor IA
 
