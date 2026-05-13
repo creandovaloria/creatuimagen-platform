@@ -1,4 +1,4 @@
-import { getPerfilCompleto } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import ProfileForm from '@/components/admin/ProfileForm'
@@ -6,10 +6,37 @@ import LinksManager from '@/components/admin/LinksManager'
 
 export default async function EditProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
-  const { data: profile, error } = await getPerfilCompleto(resolvedParams.slug)
+  const supabase = await createClient()
+  
+  // 1. Obtener datos principales del perfil (filtrado por RLS si no es admin)
+  const { data: profile, error: perfilError } = await supabase
+    .from('perfiles')
+    .select('*')
+    .eq('slug', resolvedParams.slug)
+    .single()
 
-  if (error || !profile) {
+  if (perfilError || !profile) {
     return notFound()
+  }
+
+  // 2. Obtener links
+  const { data: links } = await supabase
+    .from('perfil_links')
+    .select('*')
+    .eq('perfil_id', profile.id)
+    .order('orden', { ascending: true })
+
+  // 3. Obtener datos de contacto VCF (opcional)
+  const { data: vcf } = await supabase
+    .from('contactos_vcf')
+    .select('*')
+    .eq('perfil_id', profile.id)
+    .maybeSingle()
+
+  const fullProfile = {
+    ...profile,
+    links: links || [],
+    vcf: vcf || null
   }
 
   return (
@@ -33,7 +60,7 @@ export default async function EditProfilePage({ params }: { params: Promise<{ sl
       <div className="space-y-8">
         {/* Top: Profile & VCard Form */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-          <ProfileForm profile={profile} />
+          <ProfileForm profile={fullProfile} />
         </div>
 
         {/* Bottom: Dynamic Links */}
@@ -42,7 +69,7 @@ export default async function EditProfilePage({ params }: { params: Promise<{ sl
           <p className="text-sm text-slate-500 mb-6">
             Usa esta sección para agregar botones dinámicos adicionales (como agendar citas, descargar un PDF, enlaces a tu blog, etc).
           </p>
-          <LinksManager perfilId={profile.id} initialLinks={profile.links} />
+          <LinksManager perfilId={fullProfile.id} initialLinks={fullProfile.links} />
         </div>
       </div>
     </div>

@@ -1,8 +1,12 @@
-import { getAllPerfiles } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export default async function AdminDashboard() {
-  const { data: perfiles, error } = await getAllPerfiles()
+  const supabase = await createClient()
+  const { data: perfiles, error } = await supabase
+    .from('perfiles')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   if (error) {
     return <div className="text-red-500">Error cargando perfiles: {error.message}</div>
