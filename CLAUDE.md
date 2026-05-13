@@ -117,7 +117,8 @@ perfiles (
   id uuid PK,
   slug text UNIQUE,
   nombre text,
-  rol text,
+  email text,              -- Email del cliente (para notificaciones)
+  rol text DEFAULT 'cliente',
   bio text,
   foto_url text,           -- URL pública de Supabase Storage (bucket avatars)
   theme_primary text,      -- Color HEX principal (ej: #1a56db)
@@ -129,6 +130,8 @@ perfiles (
   facebook text,
   youtube text,
   whatsapp text,
+  custom_domain text,
+  user_id uuid,            -- Relación con auth.users
   activo boolean DEFAULT true,
   created_at timestamptz
 )

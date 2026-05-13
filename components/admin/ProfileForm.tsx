@@ -39,6 +39,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
      whatsapp: profile.whatsapp || '',
     usa_colores_tema: profile.usa_colores_tema || false,
     custom_domain: profile.custom_domain || '',
+    user_id: profile.user_id || '',
     // VCard
     vcard_nombre_legal: profile.vcf?.nombre_legal || '',
     vcard_telefono: profile.vcf?.telefono || '',
@@ -111,6 +112,7 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
          whatsapp: formData.whatsapp,
         usa_colores_tema: formData.usa_colores_tema,
         custom_domain: formData.custom_domain,
+        user_id: formData.user_id || null,
       },
       {
         nombre_legal: formData.vcard_nombre_legal,
@@ -262,6 +264,26 @@ export default function ProfileForm({ profile }: ProfileFormProps) {
                 {message}
               </div>
             )}
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Acceso de Cliente</h4>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Supabase User ID</label>
+                  <input 
+                    type="text" 
+                    name="user_id" 
+                    value={formData.user_id} 
+                    onChange={handleChange}
+                    placeholder="ID del usuario en Auth"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[10px] font-mono outline-none focus:border-blue-500"
+                  />
+                </div>
+                <p className="text-[9px] text-slate-400 italic leading-tight">
+                  Copia el ID del usuario desde el Dashboard de Supabase (Auth) y pégalo aquí para que el cliente pueda gestionar su propio perfil.
+                </p>
+              </div>
+            </div>
 
             <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Información de Sistema</h4>

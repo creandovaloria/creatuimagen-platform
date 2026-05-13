@@ -100,6 +100,7 @@ export interface PerfilData {
   id: string
   slug: string
   nombre: string
+  email: string | null
   rol: string
   bio: string | null
   foto_url: string | null
@@ -114,6 +115,7 @@ export interface PerfilData {
   whatsapp: string | null
   usa_colores_tema: boolean
   custom_domain: string | null
+  user_id: string | null
 }
 
 export interface PerfilLinkData {

@@ -161,7 +161,7 @@ export default function RegistroPage() {
                     <span>Procesando...</span>
                   </span>
                 ) : (
-                  "Obtener mi Bio — $299 MXN"
+                  "Obtener mi Bio — $950 MXN"
                 )}
               </div>
             </button>

@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+// Usando fetch nativo de Node.js (v18+)
 
 const ACCESS_TOKEN = 'APP_USR-6795360745009030-051221-146ba117193fc661a7d28a55ba16fcc5-3355880913';
 const WEBHOOK_URL = 'https://bios.creatuimagen.online/api/webhook';

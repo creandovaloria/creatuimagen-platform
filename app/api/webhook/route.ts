@@ -32,19 +32,26 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
         }
 
-        // 1. Crear el perfil en Supabase (MODO SEGURO - Mínimo absoluto)
+        // 1. Crear el perfil en Supabase (MODO SEGURO)
         const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
             nombre: nombre || email.split('@')[0],
             email,
             slug,
-            activo: true
+            whatsapp: whatsapp || null,
+            activo: true,
+            rol: 'cliente' // Aseguramos el rol aunque ya tenga default en DB
           });
 
         if (dbError) {
-          console.error('Error insertando en Supabase:', dbError);
-          return NextResponse.json({ error: 'DB Error' }, { status: 500 });
+          // Si el perfil ya existe (ej. reintento de webhook), no lo tratamos como error fatal
+          if (dbError.code === '23505') { 
+            console.log(`ℹ️ El perfil ${slug} ya existe. Saltando inserción.`);
+          } else {
+            console.error('❌ Error insertando en Supabase:', dbError);
+            return NextResponse.json({ error: 'DB Error' }, { status: 500 });
+          }
         }
 
         // 2. Enviar Emails

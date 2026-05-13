@@ -24,7 +24,7 @@ export async function POST(request: Request) {
             id: 'bio-pro-anual',
             title: 'Perfil Digital Bio Pro (1 año)',
             quantity: 1,
-            unit_price: 299, // Precio en MXN
+            unit_price: 950, // Precio en MXN
             currency_id: 'MXN',
           }
         ],
