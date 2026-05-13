@@ -32,6 +32,7 @@ export async function POST(request: Request) {
           pending: `${process.env.NEXT_PUBLIC_URL || 'https://bios.creatuimagen.online'}/registro/pendiente`,
         },
         auto_return: 'approved',
+        notification_url: `${process.env.NEXT_PUBLIC_URL || 'https://bios.creatuimagen.online'}/api/webhook`,
         metadata: {
           slug,
           email,
