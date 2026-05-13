@@ -2,6 +2,8 @@ import { Preference } from 'mercadopago';
 import { NextResponse } from 'next/server';
 import { getMercadoPagoClient } from '@/lib/mercadopago';
 
+export const dynamic = 'force-dynamic';
+
 const client = getMercadoPagoClient('BIOS');
 
 export async function POST(request: Request) {

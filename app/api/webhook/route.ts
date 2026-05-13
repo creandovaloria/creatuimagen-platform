@@ -4,10 +4,12 @@ import { Payment } from 'mercadopago';
 import { supabaseAdmin } from '@/lib/supabase-admin';
 import { sendWelcomeEmail, sendAdminNotification } from '@/lib/email';
 
-const client = getMercadoPagoClient('BIOS');
+// Forzamos que esta ruta sea siempre dinámica (no se intente pre-renderizar en build)
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    const client = getMercadoPagoClient('BIOS');
     const body = await request.json();
     const { type, data } = body;
 
@@ -28,7 +30,6 @@ export async function POST(request: Request) {
             email,
             slug,
             activo: true,
-            // Valores por defecto
             rol: 'Usuario Pro',
             primary_color: '#2563eb'
           });
@@ -39,8 +40,8 @@ export async function POST(request: Request) {
         }
 
         // 2. Enviar Emails
-        await sendWelcomeEmail({ nombre, slug, email });
-        await sendAdminNotification({ nombre, slug, email });
+        await sendWelcomeEmail({ nombre, slug, email, unit: 'BIOS' });
+        await sendAdminNotification({ nombre, slug, email, unit: 'BIOS' });
 
         console.log(`✅ Perfil ${slug} activado con éxito.`);
       }
