@@ -1,17 +1,42 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+type BusinessUnit = 'BIOS' | 'EVENTOS' | 'ARTURO';
+
+function getResendClient(unit: BusinessUnit = 'BIOS') {
+  let apiKey = '';
+  let fromEmail = '';
+
+  switch (unit) {
+    case 'BIOS':
+      apiKey = process.env.RESEND_BIOS_API_KEY || process.env.RESEND_API_KEY || '';
+      fromEmail = 'Crea Tu Imagen <bienvenida@invitaciones.arturobarrios.com>'; 
+      break;
+    case 'EVENTOS':
+      apiKey = process.env.RESEND_EVENTOS_API_KEY || '';
+      fromEmail = 'Eventos <hola@invitaciones.arturobarrios.com>';
+      break;
+    case 'ARTURO':
+      apiKey = process.env.RESEND_ARTURO_API_KEY || '';
+      fromEmail = 'Arturo Barrios <hola@arturobarrios.com>';
+      break;
+  }
+
+  return { client: new Resend(apiKey), from: fromEmail };
+}
 
 interface WelcomeEmailProps {
   nombre: string;
   slug: string;
   email: string;
+  unit?: BusinessUnit;
 }
 
-export async function sendWelcomeEmail({ nombre, slug, email }: WelcomeEmailProps) {
+export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
-    const data = await resend.emails.send({
-      from: 'Crea Tu Imagen <bienvenida@invitaciones.arturobarrios.com>', 
+    const { client, from } = getResendClient(unit);
+    
+    const data = await client.emails.send({
+      from: from, 
       to: email,
       subject: '¡Tu Bio Profesional ya está lista! 🚀',
       html: `
@@ -39,10 +64,13 @@ export async function sendWelcomeEmail({ nombre, slug, email }: WelcomeEmailProp
   }
 }
 
-export async function sendAdminNotification({ nombre, email, slug }: WelcomeEmailProps) {
+export async function sendAdminNotification({ nombre, email, slug, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
-    await resend.emails.send({
-      from: 'Crea Tu Imagen <ventas@invitaciones.arturobarrios.com>',
+    const { client, from } = getResendClient(unit);
+    const salesEmail = from.replace('bienvenida', 'ventas').replace('hola', 'ventas');
+
+    await client.emails.send({
+      from: salesEmail,
       to: 'creandovaloria@gmail.com',
       subject: '💰 ¡Nueva Venta! - Crea Tu Imagen',
       html: `
@@ -50,6 +78,7 @@ export async function sendAdminNotification({ nombre, email, slug }: WelcomeEmai
         <p><b>Cliente:</b> ${nombre}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Slug:</b> ${slug}</p>
+        <p><b>Unidad:</b> ${unit}</p>
       `,
     });
   } catch (error) {
