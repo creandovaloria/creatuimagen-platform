@@ -26,7 +26,16 @@ export default async function AdminLayout({
           </Link>
           {user?.email === 'creandovalor.ia@gmail.com' && (
             <div className="pt-4 mt-4 border-t border-slate-100">
-              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sistema</span>
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Negocio & CRM</span>
+              <div className="mt-2 space-y-1">
+                <Link 
+                  href="/admin/ventas" 
+                  className="flex items-center px-3 py-2 text-sm font-black rounded-md text-emerald-600 hover:bg-emerald-50 transition-colors"
+                >
+                  💰 Centro de Ventas
+                </Link>
+              </div>
+              <span className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest block mt-4">Sistema</span>
               <div className="mt-2 space-y-1">
                 <a 
                   href="https://supabase.com" 
