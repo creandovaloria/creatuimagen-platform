@@ -32,18 +32,14 @@ export async function POST(request: Request) {
           return NextResponse.json({ error: 'Missing metadata' }, { status: 400 });
         }
 
-        // 1. Crear el perfil en Supabase con los nombres de columna EXACTOS
+        // 1. Crear el perfil en Supabase (MODO SEGURO - Mínimo absoluto)
         const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
             nombre: nombre || email.split('@')[0],
             email,
             slug,
-            activo: true,
-            rol: 'Usuario Pro',
-            theme_primary: '#2563eb', // Nombre correcto de la columna
-            theme_accent: '#4ade80',  // Nombre correcto de la columna
-            whatsapp: whatsapp || ''
+            activo: true
           });
 
         if (dbError) {
