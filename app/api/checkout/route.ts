@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       }
     });
 
-    return NextResponse.json({ id: result.id, init_point: result.init_point });
+    return NextResponse.json({ id: result.id, url: result.init_point });
   } catch (error: any) {
     console.error('Error creando preferencia MP:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
