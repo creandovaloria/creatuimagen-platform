@@ -7,7 +7,6 @@ export default function RegistroPage() {
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
-    whatsapp: '',
     slug: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -15,8 +14,20 @@ export default function RegistroPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    if (name === 'slug') {
-      // Limpiar el slug para que sea URL-friendly
+    
+    if (name === 'nombre') {
+      // Auto-generar slug basado en el nombre si el slug está vacío o era automático
+      const cleanSlug = value.toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        nombre: value,
+        slug: prev.slug === '' || prev.slug === prev.nombre.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') ? cleanSlug : prev.slug
+      }))
+    } else if (name === 'slug') {
       const cleanSlug = value.toLowerCase().replace(/[^a-z0-9-]/g, '-')
       setFormData(prev => ({ ...prev, slug: cleanSlug }))
     } else {
@@ -38,62 +49,69 @@ export default function RegistroPage() {
       const data = await response.json()
       
       if (data.init_point) {
-        // Redirigir a Mercado Pago
         window.location.href = data.init_point
       } else {
-        throw new Error(data.error || 'No se pudo crear la preferencia de pago')
+        throw new Error(data.error || 'No se pudo crear el pago')
       }
+    } catch (err: any) {
+      alert(`❌ Error: ${err.message}`)
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] flex flex-col items-center justify-center p-6 font-sans">
-      <div className="max-w-md w-full space-y-10 text-center">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 font-sans selection:bg-blue-100">
+      <div className="max-w-[440px] w-full space-y-8 text-center">
         
-        {/* Header */}
-        <div className="space-y-3">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-3xl shadow-xl shadow-blue-200 mb-4 animate-bounce-subtle">
-            <span className="text-white text-3xl font-bold">B</span>
+        <div className="space-y-4">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-blue-700 rounded-[2rem] shadow-2xl shadow-blue-200 mb-2">
+            <span className="text-white text-4xl font-black italic tracking-tighter">B</span>
           </div>
           <h1 className="text-4xl font-black text-slate-900 tracking-tight">Tu Bio Profesional</h1>
-          <p className="text-slate-500 text-lg">Crea tu tarjeta digital en menos de 2 minutos.</p>
+          <p className="text-slate-500 text-lg max-w-[280px] mx-auto leading-tight">Crea tu tarjeta digital en segundos.</p>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-slate-100 space-y-6 text-left">
+        <form onSubmit={handleSubmit} className="bg-white p-8 sm:p-10 rounded-[3rem] shadow-2xl shadow-slate-200 border border-white/50 space-y-8 text-left relative overflow-hidden">
           
-          <div className="space-y-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Nombre Completo</label>
-              <input 
-                required
-                type="text" 
-                name="nombre"
-                value={formData.nombre}
-                onChange={handleChange}
-                placeholder="Juan Pérez"
-                className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-all outline-none text-slate-700 font-medium"
-              />
+          <div className="space-y-6">
+            {/* Nombre */}
+            <div className="group space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-blue-600">Nombre Completo</label>
+              <div className="relative">
+                <input 
+                  required
+                  type="text" 
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  placeholder="Ej. Juan Pérez"
+                  className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-semibold placeholder:text-slate-300"
+                />
+              </div>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Email</label>
+            {/* Email */}
+            <div className="group space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-blue-600">Email Personal</label>
               <input 
                 required
                 type="email" 
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="juan@ejemplo.com"
-                className="w-full px-5 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-all outline-none text-slate-700 font-medium"
+                placeholder="hola@ejemplo.com"
+                className="w-full px-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-semibold placeholder:text-slate-300"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] ml-1">Tu Link Personalizado</label>
+            {/* Slug / Link */}
+            <div className="group space-y-2">
+              <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1 transition-colors group-focus-within:text-blue-600">Tu Link Personalizado</label>
               <div className="relative">
+                <div className="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+                  <span className="text-slate-300 font-medium">bios.me/</span>
+                </div>
                 <input 
                   required
                   type="text" 
@@ -101,48 +119,37 @@ export default function RegistroPage() {
                   value={formData.slug}
                   onChange={handleChange}
                   placeholder="tu-nombre"
-                  className="w-full pl-5 pr-4 py-4 bg-slate-50 border-none rounded-2xl focus:ring-2 focus:ring-blue-500/20 transition-all outline-none text-slate-700 font-bold"
+                  className="w-full pl-[85px] pr-6 py-5 bg-slate-50 border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-blue-100 transition-all outline-none text-blue-600 font-bold placeholder:text-slate-300"
                 />
               </div>
-              <p className="text-[10px] text-slate-400 italic ml-1">
-                bios.creatuimagen.online/{formData.slug || 'tu-nombre'}
-              </p>
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all shadow-xl ${
-              isSubmitting 
-              ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-              : 'bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.01] shadow-blue-600/20'
-            }`}
-          >
-            {isSubmitting ? 'Procesando pago...' : 'Continuar al Pago'}
-          </button>
+          <div className="pt-4 space-y-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className={`w-full py-5 rounded-[1.5rem] font-black text-xl transition-all shadow-xl shadow-blue-100 ${
+                isSubmitting 
+                ? 'bg-slate-100 text-slate-300 cursor-not-allowed translate-y-0.5' 
+                : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-blue-200 active:scale-[0.98]'
+              }`}
+            >
+              {isSubmitting ? 'Cargando...' : 'Obtener mi Bio — $299'}
+            </button>
 
-          <div className="flex items-center justify-center gap-2 pt-2">
-            <span className="text-[10px] text-slate-400 font-medium">Pago seguro vía</span>
-            <img src="https://logodownload.org/wp-content/uploads/2019/06/mercado-pago-logo.png" alt="Mercado Pago" className="h-3 opacity-50 grayscale" />
+            <div className="flex items-center justify-center gap-3 opacity-40 hover:opacity-60 transition-opacity">
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Pago Seguro</span>
+              <img src="https://logodownload.org/wp-content/uploads/2019/06/mercado-pago-logo.png" alt="Mercado Pago" className="h-3.5 grayscale" />
+            </div>
           </div>
+
         </form>
 
-        {/* Footer */}
-        <p className="text-slate-400 text-xs">
-          ¿Ya tienes cuenta? <a href="/login" className="text-blue-600 font-bold hover:underline">Inicia sesión</a>
+        <p className="text-slate-400 text-sm font-medium">
+          ¿Ya tienes cuenta? <a href="/login" className="text-blue-600 font-black hover:underline decoration-2">Entrar</a>
         </p>
       </div>
-
-      <style jsx>{`
-        @keyframes bounce-subtle {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        .animate-bounce-subtle {
-          animation: bounce-subtle 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   )
 }
