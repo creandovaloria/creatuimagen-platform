@@ -34,6 +34,7 @@ La plataforma soporta múltiples cuentas de Mercado Pago según la unidad de neg
 - `MP_BIOS_ACCESS_TOKEN`: Para ventas en bios.creatuimagen.online
 - `MP_EVENTOS_ACCESS_TOKEN`: Para ventas en eventos.creatuimagen.online
 - `MP_ARTURO_ACCESS_TOKEN`: Para ventas personales en arturobarrios.com
+- `RESEND_API_KEY`: Para envío de correos transaccionales (Onboarding)
 - `NEXT_PUBLIC_URL`: URL base para retornos de pago (https://bios.creatuimagen.online)
 
 ---

@@ -11,6 +11,7 @@
 | **Mercado Pago** | Pagos Bios | creandovaloria@gmail.com | `MP_BIOS_ACCESS_TOKEN` | Panel Dev MP |
 | **Mercado Pago** | Pagos Eventos | creandovaloria@gmail.com | `MP_EVENTOS_ACCESS_TOKEN` | Panel Dev MP |
 | **Namecheap** | Dominios | creandovaloria@gmail.com | `NAMECHEAP_API_KEY` | Dashboard Namecheap |
+| **Resend** | Email Transaccional | creandovaloria@gmail.com | `RESEND_API_KEY` | Dashboard Resend |
 | **GitHub** | Código | creandovaloria@gmail.com | N/A | Google Auth |
 
 ## 🛠️ Variables de Entorno Actuales (.env.local)
