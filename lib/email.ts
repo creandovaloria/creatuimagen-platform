@@ -81,7 +81,9 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
 export async function sendAdminNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: { nombre: string, slug: string, email: string, whatsapp?: string, unit?: BusinessUnit }) {
   try {
     const { client, from } = getResendClient(unit);
-    const waLink = whatsapp ? `https://wa.me/521${whatsapp.replace(/\s+/g, '')}` : null;
+    const cleanWhatsApp = whatsapp ? whatsapp.replace(/\D/g, '') : null;
+    const finalWhatsApp = cleanWhatsApp ? (cleanWhatsApp.startsWith('52') ? cleanWhatsApp : `52${cleanWhatsApp}`) : null;
+    const waLink = finalWhatsApp ? `https://wa.me/${finalWhatsApp}` : null;
     
     await client.emails.send({
       from: from,
@@ -116,7 +118,9 @@ export async function sendAdminNotification({ nombre, slug, email, whatsapp, uni
 export async function sendAbandonmentNotification({ nombre, slug, email, whatsapp, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
-    const waLink = whatsapp ? `https://wa.me/521${whatsapp.replace(/\s+/g, '')}` : null;
+    const cleanWhatsApp = whatsapp ? whatsapp.replace(/\D/g, '') : null;
+    const finalWhatsApp = cleanWhatsApp ? (cleanWhatsApp.startsWith('52') ? cleanWhatsApp : `52${cleanWhatsApp}`) : null;
+    const waLink = finalWhatsApp ? `https://wa.me/${finalWhatsApp}` : null;
     
     await client.emails.send({
       from: from,
