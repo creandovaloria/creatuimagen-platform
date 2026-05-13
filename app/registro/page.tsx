@@ -102,27 +102,39 @@ export default function RegistroPage() {
             />
           </div>
 
-          {/* Campo: WhatsApp Dividido */}
+          {/* Campo: WhatsApp Dividido con Selector de País */}
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">WhatsApp de Contacto</label>
             <div className="flex space-x-3">
-              <div className="relative w-24">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">+</span>
-                <input
-                  type="text"
-                  placeholder="52"
-                  className="w-full pl-8 pr-3 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold"
+              <div className="relative w-32">
+                <select
+                  className="w-full pl-3 pr-8 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold appearance-none cursor-pointer"
                   value={whatsappData.code}
-                  onChange={(e) => setWhatsappData({ ...whatsappData, code: e.target.value.replace(/\D/g, '') })}
-                />
+                  onChange={(e) => setWhatsappData({ ...whatsappData, code: e.target.value })}
+                >
+                  <option value="52">🇲🇽 +52</option>
+                  <option value="1">🇺🇸 +1</option>
+                  <option value="34">🇪🇸 +34</option>
+                  <option value="54">🇦🇷 +54</option>
+                  <option value="57">🇨🇴 +57</option>
+                  <option value="56">🇨🇱 +56</option>
+                  <option value="51">🇵🇪 +51</option>
+                  <option value="502">🇬🇹 +502</option>
+                  <option value="506">🇨🇷 +506</option>
+                </select>
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
               </div>
               <input
                 type="tel"
                 placeholder="55 1234 5678"
                 required
-                className="flex-1 px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-100 transition-all outline-none text-slate-800 font-bold"
+                className="flex-1 px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold"
                 value={whatsappData.number}
-                onChange={(e) => setWhatsappData({ ...whatsappData, number: e.target.value })}
+                onChange={(e) => setWhatsappData({ ...whatsappData, number: e.target.value.replace(/\D/g, '') })}
               />
             </div>
           </div>
