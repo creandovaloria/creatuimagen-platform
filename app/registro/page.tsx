@@ -23,18 +23,26 @@ export default function RegistroPage() {
     setFormData({ ...formData, nombre: val, slug });
   };
 
+  const [whatsappData, setWhatsappData] = useState({ code: '52', number: '' });
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (loading) return;
     
     setLoading(true);
 
+    const fullWhatsapp = `${whatsappData.code}${whatsappData.number}`.replace(/\D/g, '');
+
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          whatsapp: `+${fullWhatsapp}`
+        })
       });
+// ... rest of code
 
       const data = await res.json();
       if (data.url) {
@@ -94,17 +102,29 @@ export default function RegistroPage() {
             />
           </div>
 
-          {/* Campo: WhatsApp */}
+          {/* Campo: WhatsApp Dividido */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">WhatsApp (con +52, +1, etc)</label>
-            <input
-              type="tel"
-              placeholder="+52 55 1234 5678"
-              required
-              className="w-full px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-100 transition-all outline-none text-slate-800 font-bold"
-              value={formData.whatsapp}
-              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-            />
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">WhatsApp de Contacto</label>
+            <div className="flex space-x-3">
+              <div className="relative w-24">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">+</span>
+                <input
+                  type="text"
+                  placeholder="52"
+                  className="w-full pl-8 pr-3 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-blue-100 transition-all outline-none text-slate-800 font-bold"
+                  value={whatsappData.code}
+                  onChange={(e) => setWhatsappData({ ...whatsappData, code: e.target.value.replace(/\D/g, '') })}
+                />
+              </div>
+              <input
+                type="tel"
+                placeholder="55 1234 5678"
+                required
+                className="flex-1 px-6 py-4 bg-slate-50 border-2 border-transparent rounded-2xl focus:bg-white focus:border-green-100 transition-all outline-none text-slate-800 font-bold"
+                value={whatsappData.number}
+                onChange={(e) => setWhatsappData({ ...whatsappData, number: e.target.value })}
+              />
+            </div>
           </div>
 
           {/* Campo: URL Personalizada */}
