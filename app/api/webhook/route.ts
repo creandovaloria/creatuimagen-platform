@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
-            nombre: nombre || 'Usuario Nuevo',
+            nombre: nombre || email.split('@')[0], // Fallback al email si no hay nombre
             email,
             slug,
             activo: true,
