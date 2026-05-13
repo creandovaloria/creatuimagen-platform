@@ -36,10 +36,9 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
   try {
     const { client, from } = getResendClient(unit);
     
-    const data = await client.emails.send({
       from: from, 
       to: email,
-      reply_to: 'arturo.barrios@bios.creatuimagen.online',
+      replyTo: 'arturo.barrios@bios.creatuimagen.online',
       subject: `¡Tu Bio ya está reservada, ${nombre}! 🚀`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; padding: 40px; color: #1e293b; background: white;">
@@ -86,7 +85,7 @@ export async function sendAdminNotification({ nombre, slug, email, whatsapp, uni
     await client.emails.send({
       from: from,
       to: 'creandovalor.ia@gmail.com',
-      reply_to: 'arturo.barrios@bios.creatuimagen.online',
+      replyTo: 'arturo.barrios@bios.creatuimagen.online',
       subject: `💰 ¡Nueva Venta! - ${nombre}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
@@ -121,7 +120,7 @@ export async function sendAbandonmentNotification({ nombre, slug, email, whatsap
     await client.emails.send({
       from: from,
       to: 'creandovalor.ia@gmail.com',
-      reply_to: 'arturo.barrios@bios.creatuimagen.online',
+      replyTo: 'arturo.barrios@bios.creatuimagen.online',
       subject: `⚠️ Intento de compra - ${nombre}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
