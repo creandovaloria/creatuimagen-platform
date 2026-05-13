@@ -8,16 +8,16 @@ function getResendClient(unit: BusinessUnit = 'BIOS') {
 
   switch (unit) {
     case 'BIOS':
-      apiKey = process.env.RESEND_BIOS_API_KEY || process.env.RESEND_API_KEY || '';
-      fromEmail = 'Crea Tu Imagen <bienvenida@invitaciones.arturobarrios.com>'; 
+      apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || process.env.RESEND_API_KEY || '';
+      fromEmail = 'Crea Tu Imagen - Bios <bienvenida@creatuimagen.online>'; 
       break;
     case 'EVENTOS':
-      apiKey = process.env.RESEND_EVENTOS_API_KEY || '';
-      fromEmail = 'Eventos <hola@invitaciones.arturobarrios.com>';
+      apiKey = process.env.RESEND_CREA_TU_IMAGEN_API_KEY || '';
+      fromEmail = 'Crea Tu Imagen - Eventos <hola@creatuimagen.online>';
       break;
     case 'ARTURO':
       apiKey = process.env.RESEND_ARTURO_API_KEY || '';
-      fromEmail = 'Arturo Barrios <hola@arturobarrios.com>';
+      fromEmail = 'Arturo Barrios - IA <ia@arturobarrios.com>';
       break;
   }
 
