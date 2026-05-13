@@ -23,10 +23,11 @@ export async function middleware(request: NextRequest) {
   const isMainDomain = hostname.includes('creatuimagen.online') || hostname.includes('vercel.app') || hostname.includes('localhost')
 
   if (!isMainDomain) {
-    // Usamos una instancia ligera de supabase para el middleware
+    // Usamos la SERVICE_ROLE_KEY porque el middleware necesita consultar slugs
+    // de forma anónima para el ruteo, saltándose el RLS.
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
     // Buscamos si el dominio (o su versión sin www) está en la DB
