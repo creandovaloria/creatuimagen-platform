@@ -51,7 +51,15 @@ export async function middleware(request: NextRequest) {
       const queryString = searchParams ? `?${searchParams}` : ''
       const rewriteUrl = new URL(`/${perfil.slug}${path}${queryString}`, request.url)
       
-      return NextResponse.rewrite(rewriteUrl)
+      // IMPORTANTE: Obtenemos la respuesta de sesión primero
+      const response = await updateSession(request)
+      
+      // Devolvemos el rewrite PERO manteniendo las cookies de la sesión
+      return NextResponse.rewrite(rewriteUrl, {
+        request: {
+          headers: response.headers,
+        },
+      })
     }
   }
 
