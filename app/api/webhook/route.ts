@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getMercadoPagoClient } from '@/lib/mercadopago';
 import { Payment } from 'mercadopago';
-import { supabaseAdmin } from '@/lib/supabase-admin';
+import { getSupabaseAdmin } from '@/lib/supabase-admin';
 import { sendWelcomeEmail, sendAdminNotification } from '@/lib/email';
 
-// Forzamos que esta ruta sea siempre dinámica (no se intente pre-renderizar en build)
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
   try {
+    const supabase = getSupabaseAdmin();
     const client = getMercadoPagoClient('BIOS');
     const body = await request.json();
     const { type, data } = body;
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
         const { slug, email, nombre } = paymentData.metadata;
 
         // 1. Crear el perfil en Supabase
-        const { error: dbError } = await supabaseAdmin
+        const { error: dbError } = await supabase
           .from('perfiles')
           .insert({
             nombre,

@@ -315,3 +315,34 @@ ALTER TABLE perfiles DROP COLUMN usa_colores_originales;
 ALTER TABLE perfiles ADD COLUMN usa_colores_tema BOOLEAN DEFAULT false;
 ```
 
+---
+
+## 🚀 Sesión — Automatización de Ventas y SaaS (12 Mayo 2026)
+
+### Decisión 17 — Arquitectura de Pagos Multicuenta
+**Problema:** Usar una sola cuenta de Mercado Pago para diferentes unidades de negocio confunde al cliente en su recibo bancario.  
+**Solución:** Implementar un gestor inteligente (`lib/mercadopago.ts`) que selecciona el `AccessToken` según la unidad (`BIOS`, `EVENTOS`, `ARTURO`).  
+**Aprendizaje:** El orden financiero desde el inicio facilita la escalabilidad y reduce reclamos.
+
+### Decisión 18 — Email Transaccional (Resend) vs Marketing
+**Lección:** Para notificaciones críticas (links de acceso, recibos), usar servicios transaccionales.  
+**Configuración:** Verificamos que Resend es la herramienta ideal por su alta entregabilidad y facilidad de integración con Next.js.  
+**Mejora:** Tradujimos los remitentes a español (`bienvenida@`, `ventas@`) para mejorar la UX.
+
+### Error 17 — Build Error: "supabaseKey is required" en Vercel
+**Síntoma:** Los deployments fallan sistemáticamente con errores de Supabase o Mercado Pago durante el Build.  
+**Causa:** Next.js intenta pre-renderizar rutas de API que dependen de variables de entorno no disponibles en build time.  
+**Solución:** Forzar ejecución dinámica en las rutas de API/Webhooks:
+```typescript
+export const dynamic = 'force-dynamic';
+```
+**Prevención:** Todas las rutas de Webhooks y Checkouts deben llevar esta bandera por seguridad.
+
+### Decisión 19 — Documentación de Accesos Privada (`ACCESOS.md`)
+**Lección:** Tener una matriz de credenciales (Servicio, Cuenta, Env Var) es vital pero peligroso.  
+**Solución:** Crear un archivo local `ACCESOS.md` y añadirlo inmediatamente al `.gitignore`.  
+**Beneficio:** El desarrollador tiene un mapa claro de la infraestructura sin comprometer la seguridad del repositorio.
+
+---
+© 2026 Creando Valor IA
+
