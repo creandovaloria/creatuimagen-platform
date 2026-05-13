@@ -23,6 +23,7 @@ export async function POST(request: Request) {
 
         // MODO PRUEBA: Si el ID es de prueba, inyectamos datos ficticios para validar el CRM
         if (paymentId.toString().startsWith('TEST_PAYMENT')) {
+          const uniqueId = Math.floor(Math.random() * 1000);
           paymentData = {
             status: 'approved',
             transaction_amount: 950,
@@ -30,10 +31,10 @@ export async function POST(request: Request) {
               email: 'rafart.barrios@gmail.com',
               nombre: 'Arturo Barrios Test',
               whatsapp: '5512345678',
-              slug: 'perfil-test-crm'
+              slug: `test-crm-${uniqueId}`
             }
           };
-          console.log('🧪 MODO PRUEBA ACTIVADO: Procesando datos ficticios para CRM');
+          console.log('🧪 MODO PRUEBA ACTIVADO:', paymentData.metadata.slug);
         } else {
           const payment = new Payment(client);
           paymentData = await payment.get({ id: paymentId });
@@ -63,7 +64,6 @@ export async function POST(request: Request) {
 
           if (clienteError) {
             console.error('❌ Error gestionando cliente en CRM:', clienteError);
-            // No bloqueamos el flujo principal si el CRM falla, pero lo logueamos
           }
 
           // 2. Crear el perfil en Supabase (VINCULADO AL CLIENTE)
@@ -78,6 +78,11 @@ export async function POST(request: Request) {
               rol: 'cliente',
               cliente_id: cliente?.id || null
             });
+
+          if (dbError) {
+            console.error('❌ Error creando perfil:', dbError.message);
+            throw new Error(`DB Error: ${dbError.message}`);
+          }
 
           // 3. Registrar la Venta en el CRM
           const { error: ventaError } = await supabase
@@ -104,16 +109,19 @@ export async function POST(request: Request) {
 
           console.log(`✅ Perfil ${slug} y Venta registrados con éxito.`);
         }
-      } catch (error) {
-      console.error('⚠️ Pago no encontrado o error en MP:', data.id);
-      // Respondemos 200 para que MP deje de reintentar notificaciones fallidas de prueba
-      return NextResponse.json({ received: true, status: 'not_found' });
+      } catch (error: any) {
+        console.error('⚠️ Webhook Processing Error:', error.message);
+        return NextResponse.json({ 
+          received: true, 
+          status: 'error',
+          message: error.message 
+        });
+      }
     }
-  }
 
     return NextResponse.json({ received: true });
   } catch (error: any) {
-    console.error('Webhook Error:', error);
+    console.error('Webhook Global Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

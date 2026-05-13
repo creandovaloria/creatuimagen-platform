@@ -1,10 +1,11 @@
 async function testFinalSaaS() {
   console.log('🚀 Iniciando Prueba de Fuego SaaS (CRM + Ventas + Perfiles)...');
 
+  const randomId = Math.floor(Math.random() * 10000);
   const testPayload = {
     type: 'payment',
     data: {
-      id: 'TEST_PAYMENT_' + Date.now()
+      id: 'TEST_PAYMENT_' + Date.now() + '_' + randomId
     }
   };
 
@@ -13,7 +14,7 @@ async function testFinalSaaS() {
   // o podemos llamar directamente a la lógica si estuviéramos en un test unitario.
   // Pero aquí llamaremos al endpoint real.
   
-  const targetUrl = 'http://localhost:3000/api/webhook';
+  const targetUrl = 'https://bios.creatuimagen.online/api/webhook';
   
   console.log(`📡 Enviando notificación a: ${targetUrl}`);
   
