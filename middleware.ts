@@ -40,7 +40,16 @@ export async function middleware(request: NextRequest) {
       .maybeSingle()
 
     if (perfil?.slug) {
-      const rewriteUrl = new URL(`/${perfil.slug}${url.pathname === '/' ? '' : url.pathname}`, request.url)
+      // Evitar bucles: si el path ya empieza con el slug, no reescribimos
+      if (url.pathname.startsWith(`/${perfil.slug}`)) {
+        return await updateSession(request)
+      }
+
+      // Reescribimos internamente a la ruta del perfil
+      const searchParams = url.searchParams.toString()
+      const path = `${url.pathname}${searchParams ? `?${searchParams}` : ''}`
+      const rewriteUrl = new URL(`/${perfil.slug}${path}`, request.url)
+      
       return NextResponse.rewrite(rewriteUrl)
     }
   }
