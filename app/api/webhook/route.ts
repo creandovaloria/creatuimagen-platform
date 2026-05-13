@@ -19,8 +19,26 @@ export async function POST(request: Request) {
     if (type === 'payment') {
       try {
         const paymentId = data.id;
-        const payment = new Payment(client);
-        const paymentData = await payment.get({ id: paymentId });
+        let paymentData;
+
+        // MODO PRUEBA
+        if (paymentId.toString().startsWith('TEST_PAYMENT')) {
+          const uniqueId = Math.floor(Math.random() * 1000);
+          paymentData = {
+            status: 'approved',
+            transaction_amount: 950,
+            metadata: {
+              email: 'rafart.barrios@gmail.com',
+              nombre: 'Arturo Barrios Test',
+              whatsapp: '525555027042',
+              slug: `test-support-${uniqueId}`
+            }
+          };
+          console.log('🧪 MODO PRUEBA ACTIVADO:', paymentData.metadata.slug);
+        } else {
+          const payment = new Payment(client);
+          paymentData = await payment.get({ id: paymentId });
+        }
 
         // Verificamos que el pago esté aprobado
         if (paymentData && paymentData.status === 'approved') {

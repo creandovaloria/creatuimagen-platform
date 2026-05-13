@@ -59,12 +59,17 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
           <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">Ahora solo falta que subas tu foto y agregues tus redes sociales para que tu Bio se vea increíble.</p>
           
           <a href="https://bios.creatuimagen.online/admin/perfiles/${slug}" 
-             style="display: block; background: #2563eb; color: white; padding: 20px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+             style="display: block; background: #2563eb; color: white; padding: 20px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); margin-bottom: 15px;">
             Personalizar mi Perfil ahora
           </a>
 
+          <a href="https://wa.me/525555027042?text=Hola!%20Necesito%20ayuda%20con%20mi%20Bio%20${slug}" 
+             style="display: block; background: #f8fafc; color: #2563eb; padding: 15px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px; border: 1px solid #e2e8f0;">
+            💬 Hablar con soporte por WhatsApp
+          </a>
+
           <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #f1f5f9; text-align: center;">
-            <p style="font-size: 12px; color: #94a3b8; margin: 0;">¿Alguna duda? Responde a este correo y te ayudaremos.</p>
+            <p style="font-size: 12px; color: #94a3b8; margin: 0;">¿Alguna duda? Escríbenos por WhatsApp o responde a este correo.</p>
             <p style="font-size: 12px; color: #cbd5e1; margin-top: 10px; font-weight: bold;">CREA TU IMAGEN .</p>
           </div>
         </div>
