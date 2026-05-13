@@ -360,5 +360,21 @@ export const dynamic = 'force-dynamic';
 **Aprendizaje:** Usar siempre **subdominios** (ej: `mail.bios.creatuimagen.online`) para proteger la reputación del dominio principal y configurar el `replyTo` hacia Zoho para centralizar la atención al cliente.
 
 ---
+
+### Decisión 22 — Base de Datos Centralizada (Estrategia CRM)
+**Decisión:** A diferencia de los emails o pagos, la base de datos de Supabase **no se separa por unidad de negocio**.  
+**Razón:** Consolidar todos los leads, perfiles y transacciones en una sola base de datos permite construir un **CRM unificado** en el futuro. Esto facilita el análisis de datos cruzados y simplifica la infraestructura (solo se requiere un set de variables `NEXT_PUBLIC_SUPABASE_URL` y `SERVICE_ROLE_KEY`).  
+**Beneficio:** Escalabilidad administrativa y visión 360 del cliente desde un solo panel.
+
+---
+
+## 🛠️ Troubleshooting & Debugging
+
+### Error 503 en Webhooks (Mercado Pago)
+- **Síntoma:** Mercado Pago devuelve "503 Service Unavailable" al intentar notificar un pago.
+- **Causa:** El servidor no pudo inicializar la conexión administrativa con Supabase.
+- **Solución:** Verificar que la variable `SUPABASE_SERVICE_ROLE_KEY` esté configurada en Vercel. **Nota:** Siempre se requiere un *Redeploy* después de añadir o cambiar una variable de entorno para que el servidor tome el nuevo valor.
+
+---
 © 2026 Creando Valor IA
 
