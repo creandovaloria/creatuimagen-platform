@@ -370,10 +370,11 @@ export const dynamic = 'force-dynamic';
 
 ## 🛠️ Troubleshooting & Debugging
 
-### Error 503 en Webhooks (Mercado Pago)
-- **Síntoma:** Mercado Pago devuelve "503 Service Unavailable" al intentar notificar un pago.
-- **Causa:** El servidor no pudo inicializar la conexión administrativa con Supabase.
-- **Solución:** Verificar que la variable `SUPABASE_SERVICE_ROLE_KEY` esté configurada en Vercel. **Nota:** Siempre se requiere un *Redeploy* después de añadir o cambiar una variable de entorno para que el servidor tome el nuevo valor.
+### Error 500 en Webhooks (IDs de Prueba)
+- **Síntoma:** El simulador de Mercado Pago devuelve "500 Internal Server Error".
+- **Causa:** El servidor intenta consultar a la API de Mercado Pago por un ID de pago inexistente o de prueba (ej: `123456`) y el SDK lanza una excepción al no encontrarlo.
+- **Solución:** Envolver la consulta `payment.get()` en un bloque `try/catch`. Si el pago no existe, el servidor debe responder con un **200 OK** (indicando que la notificación fue recibida) pero sin procesar ninguna acción de base de datos o email.
+- **Lección:** Los Webhooks deben ser "resilientes" a datos basura o de prueba para evitar bloqueos en las herramientas de integración.
 
 ---
 © 2026 Creando Valor IA
