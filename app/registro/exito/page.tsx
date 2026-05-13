@@ -1,78 +1,97 @@
-"use client"
+'use client';
 
-import { useSearchParams } from 'next/navigation'
-import Link from 'next/link'
-import { useEffect, Suspense } from 'react'
-import confetti from 'canvas-confetti'
+import { Suspense, useEffect, useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 function ExitoContent() {
-  const searchParams = useSearchParams()
-  const slug = searchParams.get('slug')
-  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const slug = searchParams.get('slug');
+  const [checking, setChecking] = useState(true);
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
-    confetti({
-      particleCount: 150,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ['#2563eb', '#9333ea', '#10b981']
-    })
-  }, [])
+    if (!slug) return;
+
+    // Función para revisar si el perfil ya existe
+    const checkProfile = async () => {
+      try {
+        const res = await fetch(`/${slug}`, { method: 'HEAD' });
+        if (res.ok) {
+          setReady(true);
+          setChecking(false);
+        } else {
+          // Reintentar en 2 segundos
+          setTimeout(checkProfile, 2000);
+        }
+      } catch (e) {
+        setTimeout(checkProfile, 2000);
+      }
+    };
+
+    checkProfile();
+  }, [slug]);
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] flex flex-col items-center justify-center p-6 text-center">
-      <div className="max-w-md w-full space-y-8 animate-in fade-in zoom-in duration-500">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-full max-w-md space-y-8 bg-white p-12 rounded-[3rem] shadow-2xl shadow-slate-200 border border-slate-100">
         
-        <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 text-green-600 rounded-full mb-4">
-          <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-
-        <div className="space-y-2">
-          <h1 className="text-4xl font-black text-slate-900 tracking-tight">¡Pago Confirmado!</h1>
-          <p className="text-slate-500 text-lg">Tu presencia digital acaba de subir de nivel.</p>
-        </div>
-
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl shadow-slate-200 border border-slate-100 space-y-6">
-          <div>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-2">Tu nueva dirección es:</p>
-            <div className="bg-slate-50 p-4 rounded-2xl flex items-center justify-between group">
-              <span className="text-blue-600 font-bold overflow-hidden text-ellipsis whitespace-nowrap mr-2">
-                bios.creatuimagen.online/{slug}
-              </span>
-              <Link 
-                href={`/${slug}`} 
-                target="_blank"
-                className="bg-white p-2 rounded-xl shadow-sm hover:shadow-md transition-all text-slate-400 hover:text-blue-600"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </Link>
-            </div>
+        <div className="flex flex-col items-center space-y-6">
+          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-green-100">
+            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+            </svg>
           </div>
+          
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">¡Pago Confirmado!</h1>
+            <p className="text-slate-500 font-medium">Tu presencia digital acaba de subir de nivel.</p>
+          </div>
+        </div>
 
-          <div className="space-y-3 pt-2">
-            <Link 
-              href={`/admin/perfiles/${slug}`}
-              className="block w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-black text-xl transition-all shadow-xl shadow-blue-600/20 active:scale-[0.98]"
+        <div className="p-6 bg-slate-50 rounded-3xl space-y-3">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tu nueva dirección es:</p>
+          <div className="text-blue-600 font-black text-lg break-all">
+            bios.creatuimagen.online/{slug}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          {ready ? (
+            <button
+              onClick={() => router.push(`/admin/perfiles/${slug}`)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl text-lg shadow-xl shadow-blue-200 transition-all transform hover:-translate-y-1 active:translate-y-0"
             >
               Configurar mi Bio ahora
-            </Link>
-            <p className="text-[11px] text-slate-400 font-medium">
-              Te enviamos un email con el link de acceso por si quieres configurarla después.
-            </p>
-          </div>
+            </button>
+          ) : (
+            <div className="flex flex-col items-center space-y-4 py-2">
+              <div className="flex items-center space-x-3 text-blue-600 font-bold">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Preparando tu panel de acceso...</span>
+              </div>
+              <p className="text-[11px] text-slate-400 font-medium italic">
+                Estamos creando tu perfil en este momento. Solo toma unos segundos.
+              </p>
+            </div>
+          )}
+          
+          <p className="text-[11px] text-slate-400">
+            También te enviamos un email con tu link de acceso directo.
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function ExitoPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Cargando...</div>}>
+    <Suspense fallback={<div>Cargando...</div>}>
       <ExitoContent />
     </Suspense>
-  )
+  );
 }
