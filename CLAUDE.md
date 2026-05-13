@@ -70,6 +70,20 @@ Lee este archivo al inicio de cada sesión para entender el proyecto completo.
 
 ---
 
+## Variables de Entorno (Vercel)
+
+| Variable | Descripción | Valor / Fuente |
+|----------|-------------|----------------|
+| `NEXT_PUBLIC_URL` | URL base de la app | `https://bios.creatuimagen.online` |
+| `RESEND_BIOS_CREA_TU_IMAGEN_API_KEY` | Email para Bios | Resend (Dominio `mail.bios.creatuimagen.online`) |
+| `RESEND_ARTURO_API_KEY` | Email para Arturo Personal | Resend (Dominio `arturobarrios.com`) |
+| `MP_BIOS_ACCESS_TOKEN` | Pagos Mercado Pago | MP Dashboard (Modo Producción) |
+| `NEXT_PUBLIC_SUPABASE_URL` | Base de Datos | Supabase Dashboard |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Base de Datos | Supabase Dashboard |
+| `SUPABASE_SERVICE_ROLE_KEY` | Admin DB (Webhook) | Supabase Dashboard |
+
+---
+
 ## Variables de entorno
 
 ```env

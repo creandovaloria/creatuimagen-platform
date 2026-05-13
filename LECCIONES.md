@@ -350,5 +350,15 @@ export const dynamic = 'force-dynamic';
 **Aprendizaje:** Guardar siempre el ID de la aplicación (`6795360745009030` en este caso) para saltar directo a la configuración técnica.
 
 ---
+
+### Decisión 21 — Arquitectura de Correos Multi-Unidad (Resend)
+**Problema:** La plataforma soporta múltiples líneas de negocio (Bios, Eventos, Personal) que requieren remitentes y credenciales distintas.  
+**Solución:** Implementar un gestor en `lib/email.ts` que selecciona la API Key basándose en la `BusinessUnit`.
+**Variables Clave:** 
+- `RESEND_BIOS_CREA_TU_IMAGEN_API_KEY`: Para la unidad de Bios.
+- `RESEND_ARTURO_API_KEY`: Para la unidad personal.
+**Aprendizaje:** Usar siempre **subdominios** (ej: `mail.bios.creatuimagen.online`) para proteger la reputación del dominio principal y configurar el `replyTo` hacia Zoho para centralizar la atención al cliente.
+
+---
 © 2026 Creando Valor IA
 
