@@ -28,11 +28,12 @@ interface WelcomeEmailProps {
   nombre: string;
   slug: string;
   email: string;
+  monto?: number;
   whatsapp?: string;
   unit?: BusinessUnit;
 }
 
-export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: WelcomeEmailProps) {
+export async function sendWelcomeEmail({ nombre, slug, email, monto = 950, unit = 'BIOS' }: WelcomeEmailProps) {
   try {
     const { client, from } = getResendClient(unit);
     
@@ -40,36 +41,56 @@ export async function sendWelcomeEmail({ nombre, slug, email, unit = 'BIOS' }: W
       from: from, 
       to: email,
       replyTo: 'arturo.barrios@bios.creatuimagen.online',
-      subject: `¡Tu Bio ya está reservada, ${nombre}! 🚀`,
+      subject: `¡Tu Bio ya está lista, ${nombre}! 🚀`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 24px; padding: 40px; color: #1e293b; background: white;">
           <div style="text-align: center; margin-bottom: 30px;">
             <div style="background: #2563eb; color: white; width: 60px; height: 60px; line-height: 60px; border-radius: 18px; display: inline-block; font-size: 32px; font-weight: 900; font-style: italic;">B</div>
           </div>
 
-          <h1 style="color: #0f172a; font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 10px;">¡Hola ${nombre}! 🚀</h1>
-          <p style="font-size: 16px; line-height: 1.6; text-align: center; color: #64748b;">Tu pago ha sido confirmado y tu link personal ha sido reservado con éxito.</p>
+          <h1 style="color: #0f172a; font-size: 26px; font-weight: 900; text-align: center; margin-bottom: 10px;">¡Felicidades ${nombre}! 🚀</h1>
+          <p style="font-size: 16px; line-height: 1.6; text-align: center; color: #64748b;">Tu pago ha sido confirmado. Ya eres parte de la nueva era de tarjetas digitales profesionales.</p>
           
           <div style="background: #f8fafc; padding: 24px; border-radius: 20px; margin: 30px 0; text-align: center; border: 1px dashed #e2e8f0;">
-            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking: 0.1em;">Tu link es:</p>
+            <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: bold; color: #94a3b8; text-transform: uppercase; tracking: 0.1em;">Tu link reservado:</p>
             <a href="https://bios.creatuimagen.online/${slug}" style="font-size: 22px; font-weight: 800; color: #2563eb; text-decoration: none;">bios.creatuimagen.online/${slug}</a>
           </div>
 
-          <div style="background: #fffbeb; padding: 20px; border-radius: 16px; border: 1px solid #fef3c7; margin-bottom: 30px;">
-            <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #92400e;">🔑 Datos de Acceso:</p>
-            <p style="margin: 0; font-size: 14px; color: #b45309;"><b>Email:</b> ${email}</p>
-            <p style="margin: 5px 0 0 0; font-size: 13px; color: #d97706;"><i>* Recibirás un segundo correo de "Supabase" para crear tu contraseña.</i></p>
+          <div style="background: #ffffff; padding: 20px; border-radius: 16px; border: 1px solid #f1f5f9; margin-bottom: 30px;">
+            <p style="margin: 0 0 15px 0; font-size: 14px; font-weight: bold; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 10px;">📄 Resumen de tu Compra:</p>
+            <table style="width: 100%; font-size: 14px; color: #64748b;">
+              <tr>
+                <td style="padding: 5px 0;">Producto:</td>
+                <td style="text-align: right; color: #1e293b; font-weight: bold;">Bio Digital Profesional</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">Monto pagado:</td>
+                <td style="text-align: right; color: #1e293b; font-weight: bold;">$${monto} MXN</td>
+              </tr>
+              <tr>
+                <td style="padding: 5px 0;">Estado:</td>
+                <td style="text-align: right; color: #059669; font-weight: bold;">Completado ✅</td>
+              </tr>
+            </table>
           </div>
 
-          <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin-top: 30px;">Próximo paso: Personalización</p>
-          <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">Ahora solo falta que subas tu foto y agregues tus redes sociales para que tu Bio se vea increíble.</p>
+          <div style="background: #fffbeb; padding: 20px; border-radius: 16px; border: 1px solid #fef3c7; margin-bottom: 30px;">
+            <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: bold; color: #92400e;">🔑 Acceso a tu Panel de Edición:</p>
+            <p style="margin: 0; font-size: 14px; color: #b45309;"><b>Usuario:</b> ${email}</p>
+            <p style="margin: 10px 0 0 0; font-size: 13px; color: #d97706; line-height: 1.4;">
+              <i><b>IMPORTANTE:</b> Te acabamos de enviar un segundo correo titulado "Confirm your signup" o "You have been invited". Ábrelo para crear tu contraseña personal y empezar a editar tu Bio.</i>
+            </p>
+          </div>
+
+          <p style="font-size: 16px; font-weight: 600; color: #0f172a; margin-top: 30px;">¡Es hora de personalizar!</p>
+          <p style="font-size: 14px; line-height: 1.6; color: #64748b; margin-bottom: 24px;">Dale vida a tu link subiendo tu foto, redes sociales y links de contacto.</p>
           
           <a href="https://bios.creatuimagen.online/admin/perfiles/${slug}" 
              style="display: block; background: #2563eb; color: white; padding: 20px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 16px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); margin-bottom: 15px;">
-            Personalizar mi Perfil ahora
+            Configurar mi Bio ahora
           </a>
 
-          <a href="https://wa.me/525555027042?text=Hola!%20Soy%20${encodeURIComponent(nombre)}.%20Necesito%20ayuda%20con%20mi%20Bio:%20bios.creatuimagen.online/${slug}.%20Mi%20correo%20es:%20${email}" 
+          <a href="https://wa.me/525555027042?text=Hola!%20Soy%20${encodeURIComponent(nombre)}.%20Necesito%20ayuda%20para%20configurar%20mi%20Bio:%20bios.creatuimagen.online/${slug}" 
              style="display: block; background: #f8fafc; color: #2563eb; padding: 15px; border-radius: 16px; text-decoration: none; text-align: center; font-weight: bold; font-size: 14px; border: 1px solid #e2e8f0;">
             💬 Hablar con soporte por WhatsApp
           </a>

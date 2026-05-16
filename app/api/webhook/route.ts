@@ -114,7 +114,13 @@ export async function POST(request: Request) {
           }
 
           // 4. Enviar Emails
-          await sendWelcomeEmail({ nombre, slug, email, unit: 'BIOS' });
+          await sendWelcomeEmail({ 
+            nombre, 
+            slug, 
+            email, 
+            monto: paymentData.transaction_amount || 950,
+            unit: 'BIOS' 
+          });
           await sendAdminNotification({ nombre, slug, email, whatsapp, unit: 'BIOS' });
 
           console.log(`✅ Perfil ${slug} y Venta registrados con éxito.`);
